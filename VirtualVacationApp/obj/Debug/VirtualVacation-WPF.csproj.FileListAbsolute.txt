@@ -51,3 +51,4 @@ C:\Users\Shaun\Documents\GitHub\VirtualVacation\VirtualVacationApp\obj\Debug\Vir
 C:\Users\Shaun\Documents\GitHub\VirtualVacation\VirtualVacationApp\obj\Debug\VirtualVacation.g.resources
 C:\Users\Shaun\Documents\GitHub\VirtualVacation\VirtualVacationApp\obj\Debug\Microsoft.Samples.Kinect.VirtualVacation.Properties.Resources.resources
 C:\Users\Shaun\Documents\GitHub\VirtualVacation\VirtualVacationApp\obj\Debug\VirtualVacation-WPF.csproj.GenerateResource.Cache
+C:\Users\Shaun\Documents\GitHub\VirtualVacation\VirtualVacationApp\bin\Debug\Microsoft.Kinect.Toolkit.BackgroundRemoval.dll
