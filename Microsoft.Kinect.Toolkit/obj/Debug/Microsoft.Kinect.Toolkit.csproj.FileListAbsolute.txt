@@ -15,7 +15,6 @@ C:\Users\Shaun\Documents\GitHub\VirtualVacation\Microsoft.Kinect.Toolkit\bin\Deb
 C:\Users\Shaun\Documents\GitHub\VirtualVacation\Microsoft.Kinect.Toolkit\bin\Debug\Microsoft.Kinect.Toolkit.pdb
 C:\Users\Shaun\Documents\GitHub\VirtualVacation\Microsoft.Kinect.Toolkit\bin\Debug\Microsoft.Kinect.Toolkit.dll.CodeAnalysisLog.xml
 C:\Users\Shaun\Documents\GitHub\VirtualVacation\Microsoft.Kinect.Toolkit\bin\Debug\Microsoft.Kinect.Toolkit.dll.lastcodeanalysissucceeded
-C:\Users\Shaun\Documents\GitHub\VirtualVacation\Microsoft.Kinect.Toolkit\obj\Debug\Microsoft.Kinect.Toolkit.csprojResolveAssemblyReference.cache
 C:\Users\Shaun\Documents\GitHub\VirtualVacation\Microsoft.Kinect.Toolkit\obj\Debug\KinectSensorChooserUI.baml
 C:\Users\Shaun\Documents\GitHub\VirtualVacation\Microsoft.Kinect.Toolkit\obj\Debug\KinectSensorChooserUI.g.cs
 C:\Users\Shaun\Documents\GitHub\VirtualVacation\Microsoft.Kinect.Toolkit\obj\Debug\Microsoft.Kinect.Toolkit_MarkupCompile.cache
