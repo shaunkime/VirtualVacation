@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 
-namespace LogoDisplacerEffect
+namespace DepthMergeEffect
 {
     public class DepthMerge : ShaderEffect
     {
@@ -11,7 +11,7 @@ namespace LogoDisplacerEffect
 
         static DepthMerge()
         {
-            _pixelShader.UriSource = Global.MakePackUri("LogoDisplacer.ps");
+            _pixelShader.UriSource = Global.MakePackUri("DepthMerge.ps");
         }
 
         public DepthMerge()

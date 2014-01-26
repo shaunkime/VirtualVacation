@@ -2,7 +2,7 @@
 using System.Reflection;
 
 
-namespace LogoDisplacerEffect
+namespace DepthMergeEffect
 {
     internal static class Global
     {

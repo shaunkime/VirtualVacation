@@ -132,6 +132,7 @@
       <Link>KinectBackgroundRemoval180_64.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Images\LogoImage.png" />
     <Resource Include="Images\VirtualVacation\Chameleon_and_hummingbird.jpg" />
     <Resource Include="Images\VirtualVacation\Chameleon_and_hummingbird.txt" />
     <Resource Include="Images\VirtualVacation\Chameleon_and_hummingbird_back.png" />

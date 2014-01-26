@@ -9,8 +9,8 @@
     <ProjectGuid>{1B6411C6-848C-4E4B-B81C-5C5B553ACFC6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LogoDisplacerEffect</RootNamespace>
-    <AssemblyName>LogoDisplacerEffect</AssemblyName>
+    <RootNamespace>DepthMergeEffect</RootNamespace>
+    <AssemblyName>DepthMergeEffect</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
@@ -77,12 +77,12 @@
   <ItemGroup>
     <Compile Include="EffectLibrary.cs">
     </Compile>
-    <Compile Include="LogoDisplacer.cs" />
+    <Compile Include="DepthMerge.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
-    <Effect Include="LogoDisplacer.fx" />
+    <Effect Include="DepthMerge.fx" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

@@ -415,5 +415,10 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
             {
             }
         }
+
+        private void Image_Loaded(object sender, RoutedEventArgs e)
+        {
+            
+        }
     }
 }
