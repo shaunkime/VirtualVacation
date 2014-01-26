@@ -47,7 +47,7 @@ float4 main(float2 uv : TEXCOORD) : COLOR
     
    // And mix in that color with a portion of the logo, to make the logo more clearly
    // visible.  Modulate it with "additionalLogoOpacity".
-   float4 finalColor = color + logoSample * logoSample.a * additionalLogoOpacity;
+   float4 finalColor = color* (1.0f, 0.0f, 0.0f, 1.0f) + logoSample *logoSample.a * additionalLogoOpacity;
    
    return finalColor;
 }
