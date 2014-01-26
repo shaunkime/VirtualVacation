@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualVacation-WPF", "Virt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Kinect.Toolkit", "..\Microsoft.Kinect.Toolkit\Microsoft.Kinect.Toolkit.csproj", "{C6F9C31B-6130-4443-A5CC-EF0664552ECD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DepthMergeEffect", "..\DepthMergeEffect\DepthMergeEffect.csproj", "{1B6411C6-848C-4E4B-B81C-5C5B553ACFC6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{C6F9C31B-6130-4443-A5CC-EF0664552ECD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6F9C31B-6130-4443-A5CC-EF0664552ECD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C6F9C31B-6130-4443-A5CC-EF0664552ECD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B6411C6-848C-4E4B-B81C-5C5B553ACFC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B6411C6-848C-4E4B-B81C-5C5B553ACFC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B6411C6-848C-4E4B-B81C-5C5B553ACFC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B6411C6-848C-4E4B-B81C-5C5B553ACFC6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

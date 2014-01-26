@@ -102,6 +102,10 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DepthMergeEffect\DepthMergeEffect.csproj">
+      <Project>{1B6411C6-848C-4E4B-B81C-5C5B553ACFC6}</Project>
+      <Name>DepthMergeEffect</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Microsoft.Kinect.Toolkit\Microsoft.Kinect.Toolkit.csproj">
       <Project>{C6F9C31B-6130-4443-A5CC-EF0664552ECD}</Project>
       <Name>Microsoft.Kinect.Toolkit</Name>
