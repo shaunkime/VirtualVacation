@@ -99,9 +99,9 @@
         <Grid Grid.Row="1">
             <Image Name="Backdrop" Source="Images/Background.jpg" Stretch="None">
                     <Image.Effect>
-                        <dme:DepthMerge Logo="{StaticResource logoImage}" 
+                        <dme:DepthMerge MaskedActor="{StaticResource logoImage}" 
                                    Displacement="{Binding ElementName=sliderDisplacement, Path=Value}"
-                                   AdditionalLogoOpacity="{Binding ElementName=sliderAdditionalOpacity, Path=Value}" />
+                                   AdditionalMaskedActorOpacity="{Binding ElementName=sliderAdditionalOpacity, Path=Value}" />
                     </Image.Effect>
                 </Image>
                 <Image Name ="MaskedColor"  Visibility="Hidden" />

@@ -50,6 +50,22 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
         /// </summary>
         private BackgroundRemovedColorStream backgroundRemovedColorStream;
 
+
+        /// <summary>
+        /// Bitmap that will hold color information
+        /// </summary>
+        private WriteableBitmap depthColorBitmap;
+
+        /// <summary>
+        /// Intermediate storage for the depth data received from the camera
+        /// </summary>
+        private DepthImagePixel[] depthPixels;
+
+        /// <summary>
+        /// Intermediate storage for the depth data converted to color
+        /// </summary>
+        private byte[] depthColorPixels;
+
         /// <summary>
         /// Intermediate storage for the skeleton data received from the sensor
         /// </summary>
@@ -208,6 +224,69 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
                     {
                         this.backgroundRemovedColorStream.ProcessDepth(depthFrame.GetRawPixelData(), depthFrame.Timestamp);
                     }
+
+                    if (depthFrame != null)
+                    {
+                        // Copy the pixel data from the image to a temporary array
+                        depthFrame.CopyDepthImagePixelDataTo(this.depthPixels);
+
+                        // Get the min and max reliable depth for the current frame
+                        int minDepth = depthFrame.MinDepth;
+                        int maxDepth = depthFrame.MaxDepth;
+                        float span = (float)(maxDepth - minDepth);
+
+                        // Convert the depth to RGB
+                        int colorPixelIndex = 0;
+                        for (int i = 0; i < this.depthPixels.Length; ++i)
+                        {
+                            // Get the depth for this pixel
+                            short depth = depthPixels[i].Depth;
+
+                            // To convert to a byte, we're discarding the most-significant
+                            // rather than least-significant bits.
+                            // We're preserving detail, although the intensity will "wrap."
+                            // Values outside the reliable depth range are mapped to 0 (black).
+
+                            // Note: Using conditionals in this loop could degrade performance.
+                            // Consider using a lookup table instead when writing production code.
+                            // See the KinectDepthViewer class used by the KinectExplorer sample
+                            // for a lookup table example.
+                            //byte intensity = (byte)(depth >= minDepth && depth <= maxDepth ? depth : 0);
+
+                            //byte upper = (byte) (depth >> 8);
+                            //byte lower = (byte)(depth & 0xff);
+
+                            float norm = ((float)(depth - minDepth)) / span;
+                            if (norm >= 1.0f)
+                                norm = 1.0f;
+                            else if (norm < 0.0f)
+                                norm = 0.0f;
+                            byte intensity = (byte)(255.0f * norm);
+                            //byte upper = byte(depth >> 8);
+                            //byte lower = byte(depth & 8);
+
+                            // Write out blue byte
+                            this.depthColorPixels[colorPixelIndex++] = intensity;
+
+                            // Write out green byte
+                            this.depthColorPixels[colorPixelIndex++] = intensity;
+
+                            // Write out red byte                        
+                            this.depthColorPixels[colorPixelIndex++] = intensity;
+
+                            // We're outputting BGR, the last byte in the 32 bits is unused so skip it
+                            // If we were outputting BGRA, we would write alpha here.
+                            ++colorPixelIndex;
+                        }
+
+                        // Write the pixel data into our bitmap
+                        this.depthColorBitmap.WritePixels(
+                            new Int32Rect(0, 0, this.depthColorBitmap.PixelWidth, this.depthColorBitmap.PixelHeight),
+                            this.depthColorPixels,
+                            this.depthColorBitmap.PixelWidth * sizeof(int),
+                            0);
+                        
+                    }
                 }
 
                 using (var colorFrame = e.OpenColorImageFrame())
@@ -350,6 +429,17 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
 
                     this.backgroundRemovedColorStream = new BackgroundRemovedColorStream(args.NewSensor);
                     this.backgroundRemovedColorStream.Enable(ColorFormat, DepthFormat);
+
+
+                    // Allocate space to put the depth pixels we'll receive
+                    depthPixels = new DepthImagePixel[args.NewSensor.DepthStream.FramePixelDataLength];
+
+                    // Allocate space to put the color pixels we'll create
+                    depthColorPixels = new byte[args.NewSensor.DepthStream.FramePixelDataLength * sizeof(int)];
+
+                    // This is the bitmap we'll display on-screen
+                    depthColorBitmap = new WriteableBitmap(args.NewSensor.DepthStream.FrameWidth, args.NewSensor.DepthStream.FrameHeight, 96.0, 96.0, PixelFormats.Bgr32, null);
+
 
                     // Allocate space to put the depth, color, and skeleton data we'll receive
                     if (null == this.skeletons)
@@ -517,6 +607,9 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             SetBackgroundImage(VacationImages[0].BackgroundFilename);
+            ImageBrush logo = (ImageBrush)this.Resources["logoImage"];
+            logo.ImageSource = depthColorBitmap;
+            
             this.KeyDown += new KeyEventHandler(OnKeyDown);
         }
     }

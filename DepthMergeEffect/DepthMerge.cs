@@ -22,9 +22,9 @@ namespace DepthMergeEffect
             // Update each DependencyProperty that's registered with a shader register.  This
             // is needed to ensure the shader gets sent the proper default value.
             UpdateShaderValue(InputProperty);
-            UpdateShaderValue(LogoProperty);
+            UpdateShaderValue(MaskedActorProperty);
             UpdateShaderValue(DisplacementProperty);
-            UpdateShaderValue(AdditionalLogoOpacityProperty);
+            UpdateShaderValue(AdditionalMaskedActorOpacityProperty);
         }
 
         #endregion
@@ -45,17 +45,17 @@ namespace DepthMergeEffect
 
 
 
-        public Brush Logo
+        public Brush MaskedActor
         {
-            get { return (Brush)GetValue(LogoProperty); }
-            set { SetValue(LogoProperty, value); }
+            get { return (Brush)GetValue(MaskedActorProperty); }
+            set { SetValue(MaskedActorProperty, value); }
         }
 
         // Brush-valued properties turn into sampler-property in the shader.
         // This helper sets "ImplicitInput" as the default, meaning the default
         // sampler is whatever the rendering of the element it's being applied to is.
-        public static readonly DependencyProperty LogoProperty =
-            ShaderEffect.RegisterPixelShaderSamplerProperty("Logo", typeof(DepthMerge), 1, SamplingMode.Bilinear);
+        public static readonly DependencyProperty MaskedActorProperty =
+            ShaderEffect.RegisterPixelShaderSamplerProperty("MaskedActor", typeof(DepthMerge), 1, SamplingMode.Bilinear);
 
 
         public double Displacement
@@ -73,16 +73,16 @@ namespace DepthMergeEffect
 
 
 
-        public double AdditionalLogoOpacity
+        public double AdditionalMaskedActorOpacity
         {
-            get { return (double)GetValue(AdditionalLogoOpacityProperty); }
-            set { SetValue(AdditionalLogoOpacityProperty, value); }
+            get { return (double)GetValue(AdditionalMaskedActorOpacityProperty); }
+            set { SetValue(AdditionalMaskedActorOpacityProperty, value); }
         }
 
         // Scalar-valued properties turn into shader constants with the register
         // number sent into PixelShaderConstantCallback().
-        public static readonly DependencyProperty AdditionalLogoOpacityProperty =
-            DependencyProperty.Register("AdditionalLogoOpacity", typeof(double), typeof(DepthMerge),
+        public static readonly DependencyProperty AdditionalMaskedActorOpacityProperty =
+            DependencyProperty.Register("AdditionalMaskedActorOpacity", typeof(double), typeof(DepthMerge),
                     new UIPropertyMetadata(5.0, PixelShaderConstantCallback(1)));
 
 
