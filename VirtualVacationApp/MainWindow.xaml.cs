@@ -9,12 +9,16 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
     using System;
     using System.Globalization;
     using System.IO;
+    using System.Collections.Generic;
     using System.Windows;
+    using System.Windows.Input;
     using System.Windows.Media;
     using System.Windows.Media.Imaging;
     using Microsoft.Kinect;
     using Microsoft.Kinect.Toolkit;
     using Microsoft.Kinect.Toolkit.BackgroundRemoval;
+    using System.Xml;
+    using System.Text;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -61,6 +65,22 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
         /// </summary>
         private bool disposed;
 
+        struct VacationImage
+        {
+            public string BackgroundFilename;
+            public string ForegroundFilename;
+            public float ForegroundDepth;
+            public float BackgroundDepth;
+            public bool ColorCorrect;
+            public int TargetDepthFloorPixelX;
+            public int TargetDepthFloorPixelY;
+            public int UserHeightAtTargetDepth;
+            public float UserCalibrationTargetDepth;
+        }
+
+        List<VacationImage> VacationImages = new List<VacationImage>();
+        int VacationIndex = 0;
+
         /// <summary>
         /// Initializes a new instance of the MainWindow class.
         /// </summary>
@@ -73,6 +93,49 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
             this.sensorChooserUi.KinectSensorChooser = this.sensorChooser;
             this.sensorChooser.KinectChanged += this.SensorChooserOnKinectChanged;
             this.sensorChooser.Start();
+
+            /*
+             * <Stages>  
+    <VirtualVacationSettingsBackgroundNode>
+      <BackgroundImage>Images/VirtualVacation/ManOnMoonBackground.png</BackgroundImage>
+      <ForegroundImage>Images/VirtualVacation/ManOnMoonForeground.png</ForegroundImage> 
+      <ForegroundDepth>2.4384</ForegroundDepth>
+      <BackgroundDepth>3.6576</BackgroundDepth>
+      <ColorCorrect>false</ColorCorrect>
+      <TargetDepthFloorPixel>
+        <x>642</x>
+        <y>533</y>
+      </TargetDepthFloorPixel>
+      <UserHeightAtTargetDepth>400</UserHeightAtTargetDepth>
+      <UserCalibrationTargetDepth>2.4384</UserCalibrationTargetDepth>
+    </VirtualVacationSettingsBackgroundNode>
+             */
+            using (XmlReader reader = XmlReader.Create("../../VacationSettings.xml"))
+            {
+                // Moves the reader to the root element.
+                reader.MoveToContent();
+                reader.ReadToFollowing("Stages");
+                while (reader.ReadToFollowing("VirtualVacationSettingsBackgroundNode"))
+                {
+                    VacationImage vacationImage = new VacationImage();
+                    if (reader.ReadToFollowing("BackgroundImage"))
+                    {
+                        vacationImage.BackgroundFilename = "../../" + reader.ReadInnerXml();
+                    }
+
+                    if (reader.ReadToFollowing("ForegroundImage"))
+                    {
+                        vacationImage.ForegroundFilename = "../../" + reader.ReadInnerXml();
+                    }
+
+                    if (reader.ReadToFollowing("ColorCorrect"))
+                    {
+                        vacationImage.ColorCorrect = reader.ReadElementContentAsBoolean();
+                    }
+
+                    VacationImages.Add(vacationImage);
+                }
+            }
         }
 
         /// <summary>
@@ -416,9 +479,45 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
             }
         }
 
-        private void Image_Loaded(object sender, RoutedEventArgs e)
+        private bool SetBackgroundImage(string filename)
         {
-            
+            BitmapImage src = new BitmapImage();
+            src.BeginInit();
+            src.UriSource = new Uri(filename, UriKind.Relative);
+            src.CacheOption = BitmapCacheOption.OnLoad;
+            src.EndInit();
+            Backdrop.Source = src;
+            Backdrop.Width = src.Width;
+            Backdrop.Height = src.Height;
+            Backdrop.MinWidth = src.Width;
+            Backdrop.MinHeight = src.Height;
+            Backdrop.InvalidateMeasure();
+            return true;
+        }
+
+        private void OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Left)
+            {
+                --VacationIndex;
+                if (VacationIndex < 0)
+                    VacationIndex = VacationImages.Count - 1;
+
+                SetBackgroundImage(VacationImages[VacationIndex].BackgroundFilename);
+            }
+            else if (e.Key == Key.Right)
+            {
+                ++VacationIndex;
+                if (VacationIndex >= VacationImages.Count)
+                    VacationIndex = 0;
+                SetBackgroundImage(VacationImages[VacationIndex].BackgroundFilename);
+            }
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            SetBackgroundImage(VacationImages[0].BackgroundFilename);
+            this.KeyDown += new KeyEventHandler(OnKeyDown);
         }
     }
 }

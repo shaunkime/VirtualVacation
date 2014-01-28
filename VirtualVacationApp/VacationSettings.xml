@@ -5,8 +5,8 @@
   <ShowTutorial>true</ShowTutorial>
   <Stages>  
     <VirtualVacationSettingsBackgroundNode>
-      <BackgroundImage>Images/VirtualVacation/ManOnMoonBackground.png</BackgroundImage>
-      <ForegroundImage>Images/VirtualVacation/ManOnMoonForeground.png</ForegroundImage> 
+      <BackgroundImage>VirtualVacation/ManOnMoonBackground.png</BackgroundImage>
+      <ForegroundImage>VirtualVacation/ManOnMoonForeground.png</ForegroundImage> 
       <ForegroundDepth>2.4384</ForegroundDepth>
       <BackgroundDepth>3.6576</BackgroundDepth>
       <ColorCorrect>false</ColorCorrect>
@@ -18,8 +18,8 @@
       <UserCalibrationTargetDepth>2.4384</UserCalibrationTargetDepth>
     </VirtualVacationSettingsBackgroundNode>
     <VirtualVacationSettingsBackgroundNode>
-      <BackgroundImage>Images/VirtualVacation/Ocean.jpg</BackgroundImage>
-      <ForegroundImage>Images/VirtualVacation/OceanForeground.png</ForegroundImage> 
+      <BackgroundImage>VirtualVacation/Ocean.jpg</BackgroundImage>
+      <ForegroundImage>VirtualVacation/OceanForeground.png</ForegroundImage> 
       <ForegroundDepth>2.4384</ForegroundDepth>
       <BackgroundDepth>8</BackgroundDepth>
       <ColorCorrect>true</ColorCorrect>
@@ -31,7 +31,7 @@
       <UserCalibrationTargetDepth>2.4384</UserCalibrationTargetDepth>
     </VirtualVacationSettingsBackgroundNode>
     <VirtualVacationSettingsBackgroundNode>
-      <BackgroundImage>Images/VirtualVacation/PierBandW.jpg</BackgroundImage>
+      <BackgroundImage>VirtualVacation/PierBandW.jpg</BackgroundImage>
       <ForegroundImage />
       <ForegroundDepth>2.4384</ForegroundDepth>
       <BackgroundDepth>3.6576</BackgroundDepth>
@@ -44,8 +44,8 @@
       <UserCalibrationTargetDepth>2.4384</UserCalibrationTargetDepth>
     </VirtualVacationSettingsBackgroundNode>
     <VirtualVacationSettingsBackgroundNode>
-      <BackgroundImage>Images/VirtualVacation/PrisonCell.jpg</BackgroundImage>
-      <ForegroundImage>Images/VirtualVacation/PrisonCellForeground.png</ForegroundImage>  
+      <BackgroundImage>VirtualVacation/PrisonCell.jpg</BackgroundImage>
+      <ForegroundImage>VirtualVacation/PrisonCellForeground.png</ForegroundImage>  
       <ForegroundDepth>2.4384</ForegroundDepth>
       <BackgroundDepth>3.6576</BackgroundDepth>
       <ColorCorrect>true</ColorCorrect>
@@ -57,8 +57,8 @@
       <UserCalibrationTargetDepth>2.4384</UserCalibrationTargetDepth>
     </VirtualVacationSettingsBackgroundNode>
     <VirtualVacationSettingsBackgroundNode>
-      <BackgroundImage>Images/VirtualVacation/harvest-millet-gleaner.png</BackgroundImage>
-      <ForegroundImage>Images/VirtualVacation/harvest-millet-gleaner-foreground.png</ForegroundImage> 
+      <BackgroundImage>VirtualVacation/harvest-millet-gleaner.png</BackgroundImage>
+      <ForegroundImage>VirtualVacation/harvest-millet-gleaner-foreground.png</ForegroundImage> 
       <ForegroundDepth>1.5</ForegroundDepth>
       <BackgroundDepth>3.6576</BackgroundDepth>
       <ColorCorrect>true</ColorCorrect>
@@ -70,8 +70,8 @@
       <UserCalibrationTargetDepth>2.4384</UserCalibrationTargetDepth>
     </VirtualVacationSettingsBackgroundNode>
     <VirtualVacationSettingsBackgroundNode>
-      <BackgroundImage>Images/VirtualVacation/Chameleon_and_hummingbird.jpg</BackgroundImage>
-      <ForegroundImage>Images/VirtualVacation/Chameleon_and_hummingbird_back.png</ForegroundImage>  
+      <BackgroundImage>VirtualVacation/Chameleon_and_hummingbird.jpg</BackgroundImage>
+      <ForegroundImage>VirtualVacation/Chameleon_and_hummingbird_back.png</ForegroundImage>  
       <ForegroundDepth>2</ForegroundDepth>
       <BackgroundDepth>3.6576</BackgroundDepth>
       <ColorCorrect>true</ColorCorrect>
@@ -83,8 +83,8 @@
       <UserCalibrationTargetDepth>2.4384</UserCalibrationTargetDepth>
     </VirtualVacationSettingsBackgroundNode>
     <VirtualVacationSettingsBackgroundNode>
-      <BackgroundImage>Images/VirtualVacation/NYTaxicabs.png</BackgroundImage>
-      <ForegroundImage>Images/VirtualVacation/NYTaxicabsForeground.png</ForegroundImage>  
+      <BackgroundImage>VirtualVacation/NYTaxicabs.png</BackgroundImage>
+      <ForegroundImage>VirtualVacation/NYTaxicabsForeground.png</ForegroundImage>  
       <ForegroundDepth>2</ForegroundDepth>
       <BackgroundDepth>3.6576</BackgroundDepth>
       <ColorCorrect>true</ColorCorrect>
@@ -96,8 +96,8 @@
       <UserCalibrationTargetDepth>2.4384</UserCalibrationTargetDepth>
     </VirtualVacationSettingsBackgroundNode>
     <VirtualVacationSettingsBackgroundNode>
-      <BackgroundImage>Images/VirtualVacation/TaProhmBackground.png</BackgroundImage>
-      <ForegroundImage>Images/VirtualVacation/TaProhmForeground.png</ForegroundImage>  
+      <BackgroundImage>VirtualVacation/TaProhmBackground.png</BackgroundImage>
+      <ForegroundImage>VirtualVacation/TaProhmForeground.png</ForegroundImage>  
       <ForegroundDepth>2.4384</ForegroundDepth>
       <BackgroundDepth>3.6576</BackgroundDepth>
       <ColorCorrect>false</ColorCorrect>
@@ -109,7 +109,7 @@
       <UserCalibrationTargetDepth>2.4384</UserCalibrationTargetDepth>
     </VirtualVacationSettingsBackgroundNode>
     <VirtualVacationSettingsBackgroundNode>
-      <BackgroundImage>Images/VirtualVacation/TurtleBeach.jpg</BackgroundImage>
+      <BackgroundImage>VirtualVacation/TurtleBeach.jpg</BackgroundImage>
       <ForegroundDepth>2.4384</ForegroundDepth>
       <BackgroundDepth>3.6576</BackgroundDepth>
       <ColorCorrect>false</ColorCorrect>

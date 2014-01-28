@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:k="clr-namespace:Microsoft.Kinect.Toolkit;assembly=Microsoft.Kinect.Toolkit"
         xmlns:dme="clr-namespace:DepthMergeEffect;assembly=DepthMergeEffect"
-        Title="Virtual Vacation" Height="735" Width="770" Closing="WindowClosing">
+        Title="Virtual Vacation" Height="735" Width="770" Closing="WindowClosing" Loaded="Window_Loaded">
 
     <Window.Resources>
             <ImageBrush x:Key="logoImage" ImageSource="Images/LogoImage.png" >
@@ -97,14 +97,13 @@
             <k:KinectSensorChooserUI Grid.Column="1" HorizontalAlignment="Center" Margin="0 0 0 5" VerticalAlignment="Top" Name="sensorChooserUi" />
         </Grid>
         <Grid Grid.Row="1">
-                <Image Source="Images/Background.jpg" Stretch="None" Loaded="Image_Loaded">
+            <Image Name="Backdrop" Source="Images/Background.jpg" Stretch="None">
                     <Image.Effect>
                         <dme:DepthMerge Logo="{StaticResource logoImage}" 
                                    Displacement="{Binding ElementName=sliderDisplacement, Path=Value}"
                                    AdditionalLogoOpacity="{Binding ElementName=sliderAdditionalOpacity, Path=Value}" />
                     </Image.Effect>
                 </Image>
-                <Image Name ="Backdrop" Source="Images\VirtualVacation\Ocean.jpg" Visibility="Hidden" />
                 <Image Name ="MaskedColor"  Visibility="Hidden" />
                 <Image Name="Foreground" Source="Images\VirtualVacation\OceanForeground.png"  Visibility="Hidden"  />
         </Grid>
