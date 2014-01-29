@@ -489,8 +489,8 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
                 return;
             }
 
-            int colorWidth = this.maskedColorBitmap.PixelWidth;
-            int colorHeight = this.maskedColorBitmap.PixelHeight;
+            int colorWidth = (int)this.Backdrop.Width;
+            int colorHeight = (int)this.Backdrop.Height;
 
             // create a render target that we'll render our controls to
             var renderBitmap = new RenderTargetBitmap(colorWidth, colorHeight, 96.0, 96.0, PixelFormats.Pbgra32);
