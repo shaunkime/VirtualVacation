@@ -511,7 +511,7 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
             // create frame from the writable bitmap and add to encoder
             encoder.Frames.Add(BitmapFrame.Create(renderBitmap));
 
-            var time = DateTime.Now.ToString("hh'-'mm'-'ss", CultureInfo.CurrentUICulture.DateTimeFormat);
+            var time = DateTime.Now.ToString("MM-dd-yy_hhmmss", CultureInfo.CurrentUICulture.DateTimeFormat);
 
             var myPhotos = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
 
