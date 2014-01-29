@@ -6,11 +6,21 @@
         Title="Virtual Vacation" Height="735" Width="770" Closing="WindowClosing" Loaded="Window_Loaded">
 
     <Window.Resources>
-            <ImageBrush x:Key="logoImage" ImageSource="Images/LogoImage.png" >
-                <ImageBrush.RelativeTransform>
-                    <RotateTransform CenterX="0.5" CenterY="0.5"/>
-                </ImageBrush.RelativeTransform>
-            </ImageBrush>
+        <ImageBrush x:Key="liveDepthMap" >
+            <ImageBrush.RelativeTransform>
+                <RotateTransform CenterX="0.5" CenterY="0.5"/>
+            </ImageBrush.RelativeTransform>
+        </ImageBrush>
+        <ImageBrush x:Key="liveColorMap" >
+            <ImageBrush.RelativeTransform>
+                <RotateTransform CenterX="0.5" CenterY="0.5"/>
+            </ImageBrush.RelativeTransform>
+        </ImageBrush>
+        <ImageBrush x:Key="backgroundDepthMap"  >
+            <ImageBrush.RelativeTransform>
+                <RotateTransform CenterX="0.5" CenterY="0.5"/>
+            </ImageBrush.RelativeTransform>
+        </ImageBrush>
         <SolidColorBrush x:Key="MediumGreyBrush" Color="#ff6e6e6e"/>
         <SolidColorBrush x:Key="KinectPurpleBrush" Color="#ff52318f"/>
         <SolidColorBrush x:Key="KinectBlueBrush" Color="#ff00BCF2"/>
@@ -99,13 +109,11 @@
         <Grid Grid.Row="1">
             <Image Name="Backdrop" Source="Images/Background.jpg" Stretch="None">
                     <Image.Effect>
-                        <dme:DepthMerge MaskedActor="{StaticResource logoImage}" 
+                    <dme:DepthMerge MaskedActor="{StaticResource liveColorMap}" ActorDepth="{StaticResource liveDepthMap}" BackgroundDepth="{StaticResource backgroundDepthMap}" 
                                    Displacement="{Binding ElementName=sliderDisplacement, Path=Value}"
                                    AdditionalMaskedActorOpacity="{Binding ElementName=sliderAdditionalOpacity, Path=Value}" />
                     </Image.Effect>
                 </Image>
-                <Image Name ="MaskedColor"  Visibility="Hidden" />
-                <Image Name="Foreground" Source="Images\VirtualVacation\OceanForeground.png"  Visibility="Hidden"  />
         </Grid>
         <Grid Grid.Row="2">
             <StackPanel>

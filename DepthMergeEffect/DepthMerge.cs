@@ -23,7 +23,9 @@ namespace DepthMergeEffect
             // is needed to ensure the shader gets sent the proper default value.
             UpdateShaderValue(InputProperty);
             UpdateShaderValue(MaskedActorProperty);
-            UpdateShaderValue(DisplacementProperty);
+            UpdateShaderValue(ActorDepthProperty);
+            UpdateShaderValue(MaskedActorProperty);
+            UpdateShaderValue(BackgroundDepthProperty);
             UpdateShaderValue(AdditionalMaskedActorOpacityProperty);
         }
 
@@ -56,6 +58,32 @@ namespace DepthMergeEffect
         // sampler is whatever the rendering of the element it's being applied to is.
         public static readonly DependencyProperty MaskedActorProperty =
             ShaderEffect.RegisterPixelShaderSamplerProperty("MaskedActor", typeof(DepthMerge), 1, SamplingMode.Bilinear);
+
+        public Brush ActorDepth
+        {
+            get { return (Brush)GetValue(ActorDepthProperty); }
+            set { SetValue(ActorDepthProperty, value); }
+        }
+
+        // Brush-valued properties turn into sampler-property in the shader.
+        // This helper sets "ImplicitInput" as the default, meaning the default
+        // sampler is whatever the rendering of the element it's being applied to is.
+        public static readonly DependencyProperty ActorDepthProperty =
+            ShaderEffect.RegisterPixelShaderSamplerProperty("ActorDepth", typeof(DepthMerge), 2);
+
+
+        public Brush BackgroundDepth
+        {
+            get { return (Brush)GetValue(BackgroundDepthProperty); }
+            set { SetValue(BackgroundDepthProperty, value); }
+        }
+
+        // Brush-valued properties turn into sampler-property in the shader.
+        // This helper sets "ImplicitInput" as the default, meaning the default
+        // sampler is whatever the rendering of the element it's being applied to is.
+        public static readonly DependencyProperty BackgroundDepthProperty =
+            ShaderEffect.RegisterPixelShaderSamplerProperty("BackgroundDepth", typeof(DepthMerge), 3);
+
 
 
         public double Displacement

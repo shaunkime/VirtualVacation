@@ -328,8 +328,8 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
                     {
                         this.maskedColorBitmap = new WriteableBitmap(backgroundRemovedFrame.Width, backgroundRemovedFrame.Height, 96.0, 96.0, PixelFormats.Bgra32, null);
 
-                        // Set the image we display to point to the bitmap where we'll put the image data
-                        this.MaskedColor.Source = this.maskedColorBitmap;
+                        ImageBrush liveColorMap = (ImageBrush)this.Resources["liveColorMap"];
+                        liveColorMap.ImageSource = maskedColorBitmap;
                     }
 
                     // Write the pixel data into our bitmap
@@ -501,15 +501,6 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
                 // render the backdrop
                 var backdropBrush = new VisualBrush(Backdrop);
                 dc.DrawRectangle(backdropBrush, null, new Rect(new Point(), new Size(colorWidth, colorHeight)));
-
-                // render the color image masked out by players
-                var colorBrush = new VisualBrush(MaskedColor);
-                dc.DrawRectangle(colorBrush, null, new Rect(new Point(), new Size(colorWidth, colorHeight)));
-
-                
-                // render the foreground
-                var foregroundBrush = new VisualBrush(Foreground);
-                dc.DrawRectangle(foregroundBrush, null, new Rect(new Point(), new Size(colorWidth, colorHeight)));
             }
 
             renderBitmap.Render(dv);
@@ -582,6 +573,19 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
             return true;
         }
 
+        private bool SetBackgroundDepthImage(string filename)
+        {
+            BitmapImage src = new BitmapImage();
+            src.BeginInit();
+            src.UriSource = new Uri(filename, UriKind.Relative);
+            src.CacheOption = BitmapCacheOption.OnLoad;
+            src.EndInit();
+
+            ImageBrush backgroundDepthMap = (ImageBrush)this.Resources["backgroundDepthMap"];
+            backgroundDepthMap.ImageSource = src;
+            return true;
+        }
+
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Left)
@@ -591,6 +595,7 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
                     VacationIndex = VacationImages.Count - 1;
 
                 SetBackgroundImage(VacationImages[VacationIndex].BackgroundFilename);
+                SetBackgroundDepthImage(VacationImages[VacationIndex].DepthMaskFilename);
             }
             else if (e.Key == Key.Right)
             {
@@ -598,15 +603,19 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
                 if (VacationIndex >= VacationImages.Count)
                     VacationIndex = 0;
                 SetBackgroundImage(VacationImages[VacationIndex].BackgroundFilename);
+                SetBackgroundDepthImage(VacationImages[VacationIndex].DepthMaskFilename);
             }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             SetBackgroundImage(VacationImages[0].BackgroundFilename);
-            ImageBrush logo = (ImageBrush)this.Resources["logoImage"];
-            logo.ImageSource = depthColorBitmap;
-            
+            SetBackgroundDepthImage(VacationImages[0].DepthMaskFilename);
+            ImageBrush liveDepthMap = (ImageBrush)this.Resources["liveDepthMap"];
+            liveDepthMap.ImageSource = depthColorBitmap;
+
+
+
             this.KeyDown += new KeyEventHandler(OnKeyDown);
         }
     }
