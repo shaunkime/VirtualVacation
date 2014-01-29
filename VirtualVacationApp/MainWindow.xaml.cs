@@ -146,6 +146,25 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
                         vacationImage.ColorCorrect = reader.ReadElementContentAsBoolean();
                     }
 
+                    if (reader.ReadToFollowing("UserHeightAtTargetDepth"))
+                    {
+                        vacationImage.UserHeightAtTargetDepth = reader.ReadElementContentAsInt();
+                    }
+
+                    if (reader.ReadToFollowing("TargetDepthFloorPixel"))
+                    {
+                        if (reader.ReadToFollowing("x"))
+                        {
+                            vacationImage.TargetDepthFloorPixelX = reader.ReadElementContentAsInt();
+                        }
+                        if (reader.ReadToFollowing("y"))
+                        {
+                            vacationImage.TargetDepthFloorPixelY = reader.ReadElementContentAsInt();
+                        }
+                    }
+
+
+
                     VacationImages.Add(vacationImage);
                 }
             }
