@@ -6,119 +6,93 @@
   <Stages>  
     <VirtualVacationSettingsBackgroundNode>
       <BackgroundImage>VirtualVacation/ManOnMoonBackground.png</BackgroundImage>
-      <ForegroundImage>VirtualVacation/ManOnMoonForeground.png</ForegroundImage> 
-      <ForegroundDepth>2.4384</ForegroundDepth>
-      <BackgroundDepth>3.6576</BackgroundDepth>
+      <DepthImage>VirtualVacation/ManOnMoonDepth.png</DepthImage> 
       <ColorCorrect>false</ColorCorrect>
       <TargetDepthFloorPixel>
         <x>642</x>
         <y>533</y>
       </TargetDepthFloorPixel>
       <UserHeightAtTargetDepth>400</UserHeightAtTargetDepth>
-      <UserCalibrationTargetDepth>2.4384</UserCalibrationTargetDepth>
     </VirtualVacationSettingsBackgroundNode>
     <VirtualVacationSettingsBackgroundNode>
       <BackgroundImage>VirtualVacation/Ocean.jpg</BackgroundImage>
-      <ForegroundImage>VirtualVacation/OceanForeground.png</ForegroundImage> 
-      <ForegroundDepth>2.4384</ForegroundDepth>
-      <BackgroundDepth>8</BackgroundDepth>
+      <DepthImage>VirtualVacation/OceanDepth.png</DepthImage> 
       <ColorCorrect>true</ColorCorrect>
       <TargetDepthFloorPixel>
         <x>412</x>
         <y>667</y>
       </TargetDepthFloorPixel>
       <UserHeightAtTargetDepth>500</UserHeightAtTargetDepth>
-      <UserCalibrationTargetDepth>2.4384</UserCalibrationTargetDepth>
     </VirtualVacationSettingsBackgroundNode>
     <VirtualVacationSettingsBackgroundNode>
       <BackgroundImage>VirtualVacation/PierBandW.jpg</BackgroundImage>
-      <ForegroundImage />
-      <ForegroundDepth>2.4384</ForegroundDepth>
-      <BackgroundDepth>3.6576</BackgroundDepth>
+      <DepthImage>VirtualVacation/PierBandWDepth.png</DepthImage>
       <ColorCorrect>true</ColorCorrect>
      <TargetDepthFloorPixel>
         <x>266</x>
         <y>704</y>
       </TargetDepthFloorPixel>
       <UserHeightAtTargetDepth>500</UserHeightAtTargetDepth>
-      <UserCalibrationTargetDepth>2.4384</UserCalibrationTargetDepth>
     </VirtualVacationSettingsBackgroundNode>
     <VirtualVacationSettingsBackgroundNode>
       <BackgroundImage>VirtualVacation/PrisonCell.jpg</BackgroundImage>
-      <ForegroundImage>VirtualVacation/PrisonCellForeground.png</ForegroundImage>  
-      <ForegroundDepth>2.4384</ForegroundDepth>
-      <BackgroundDepth>3.6576</BackgroundDepth>
+      <DepthImage>VirtualVacation/PrisonCellDepth.png</DepthImage>  
       <ColorCorrect>true</ColorCorrect>
       <TargetDepthFloorPixel>
         <x>487</x>
         <y>761</y>
       </TargetDepthFloorPixel>
       <UserHeightAtTargetDepth>600</UserHeightAtTargetDepth>
-      <UserCalibrationTargetDepth>2.4384</UserCalibrationTargetDepth>
     </VirtualVacationSettingsBackgroundNode>
     <VirtualVacationSettingsBackgroundNode>
       <BackgroundImage>VirtualVacation/harvest-millet-gleaner.png</BackgroundImage>
-      <ForegroundImage>VirtualVacation/harvest-millet-gleaner-foreground.png</ForegroundImage> 
-      <ForegroundDepth>1.5</ForegroundDepth>
-      <BackgroundDepth>3.6576</BackgroundDepth>
+      <DepthImage>VirtualVacation/harvest-millet-gleaner-Depth.png</DepthImage> 
       <ColorCorrect>true</ColorCorrect>
       <TargetDepthFloorPixel>
         <x>682</x>
         <y>669</y>
       </TargetDepthFloorPixel>
       <UserHeightAtTargetDepth>600</UserHeightAtTargetDepth>
-      <UserCalibrationTargetDepth>2.4384</UserCalibrationTargetDepth>
     </VirtualVacationSettingsBackgroundNode>
     <VirtualVacationSettingsBackgroundNode>
       <BackgroundImage>VirtualVacation/Chameleon_and_hummingbird.jpg</BackgroundImage>
-      <ForegroundImage>VirtualVacation/Chameleon_and_hummingbird_back.png</ForegroundImage>  
-      <ForegroundDepth>2</ForegroundDepth>
-      <BackgroundDepth>3.6576</BackgroundDepth>
+      <DepthImage>VirtualVacation/Chameleon_and_hummingbird_depth.png</DepthImage>  
       <ColorCorrect>true</ColorCorrect>
       <TargetDepthFloorPixel>
         <x>495</x>
         <y>768</y>
       </TargetDepthFloorPixel>
       <UserHeightAtTargetDepth>400</UserHeightAtTargetDepth>
-      <UserCalibrationTargetDepth>2.4384</UserCalibrationTargetDepth>
     </VirtualVacationSettingsBackgroundNode>
     <VirtualVacationSettingsBackgroundNode>
       <BackgroundImage>VirtualVacation/NYTaxicabs.png</BackgroundImage>
-      <ForegroundImage>VirtualVacation/NYTaxicabsForeground.png</ForegroundImage>  
-      <ForegroundDepth>2</ForegroundDepth>
-      <BackgroundDepth>3.6576</BackgroundDepth>
+      <DepthImage>VirtualVacation/NYTaxicabsDepth.png</DepthImage>  
       <ColorCorrect>true</ColorCorrect>
       <TargetDepthFloorPixel>
         <x>495</x>
         <y>595</y>
       </TargetDepthFloorPixel>
       <UserHeightAtTargetDepth>600</UserHeightAtTargetDepth>
-      <UserCalibrationTargetDepth>2.4384</UserCalibrationTargetDepth>
     </VirtualVacationSettingsBackgroundNode>
     <VirtualVacationSettingsBackgroundNode>
       <BackgroundImage>VirtualVacation/TaProhmBackground.png</BackgroundImage>
-      <ForegroundImage>VirtualVacation/TaProhmForeground.png</ForegroundImage>  
-      <ForegroundDepth>2.4384</ForegroundDepth>
-      <BackgroundDepth>3.6576</BackgroundDepth>
+      <DepthImage>VirtualVacation/TaProhmDepth.png</DepthImage>  
       <ColorCorrect>false</ColorCorrect>
       <TargetDepthFloorPixel>
         <x>164</x>
         <y>645</y>
       </TargetDepthFloorPixel>
       <UserHeightAtTargetDepth>500</UserHeightAtTargetDepth>
-      <UserCalibrationTargetDepth>2.4384</UserCalibrationTargetDepth>
     </VirtualVacationSettingsBackgroundNode>
     <VirtualVacationSettingsBackgroundNode>
       <BackgroundImage>VirtualVacation/TurtleBeach.jpg</BackgroundImage>
-      <ForegroundDepth>2.4384</ForegroundDepth>
-      <BackgroundDepth>3.6576</BackgroundDepth>
+      <DepthImage>VirtualVacation/TurtleBeachDepth.png</DepthImage>
       <ColorCorrect>false</ColorCorrect>
       <TargetDepthFloorPixel>
         <x>164</x>
         <y>619</y>
       </TargetDepthFloorPixel>
       <UserHeightAtTargetDepth>400</UserHeightAtTargetDepth>
-      <UserCalibrationTargetDepth>2.4384</UserCalibrationTargetDepth>
     </VirtualVacationSettingsBackgroundNode>
   </Stages>
 </VirtualVacationSettings>

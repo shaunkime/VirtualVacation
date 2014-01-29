@@ -84,14 +84,11 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
         struct VacationImage
         {
             public string BackgroundFilename;
-            public string ForegroundFilename;
-            public float ForegroundDepth;
-            public float BackgroundDepth;
+            public string DepthMaskFilename;
             public bool ColorCorrect;
             public int TargetDepthFloorPixelX;
             public int TargetDepthFloorPixelY;
             public int UserHeightAtTargetDepth;
-            public float UserCalibrationTargetDepth;
         }
 
         List<VacationImage> VacationImages = new List<VacationImage>();
@@ -139,9 +136,9 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
                         vacationImage.BackgroundFilename = "../../" + reader.ReadInnerXml();
                     }
 
-                    if (reader.ReadToFollowing("ForegroundImage"))
+                    if (reader.ReadToFollowing("DepthImage"))
                     {
-                        vacationImage.ForegroundFilename = "../../" + reader.ReadInnerXml();
+                        vacationImage.DepthMaskFilename = "../../" + reader.ReadInnerXml();
                     }
 
                     if (reader.ReadToFollowing("ColorCorrect"))
