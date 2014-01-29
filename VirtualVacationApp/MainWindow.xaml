@@ -110,8 +110,9 @@
             <Image Name="Backdrop" Source="Images/Background.jpg" Stretch="None">
                     <Image.Effect>
                     <dme:DepthMerge MaskedActor="{StaticResource liveColorMap}" ActorDepth="{StaticResource liveDepthMap}" BackgroundDepth="{StaticResource backgroundDepthMap}" 
-                                   Displacement="{Binding ElementName=sliderDisplacement, Path=Value}"
-                                   AdditionalMaskedActorOpacity="{Binding ElementName=sliderAdditionalOpacity, Path=Value}" />
+                                   ActorScale="{Binding ElementName=actorScaleSlider, Path=Value}"
+                                   ActorXOffset="{Binding ElementName=actorXOffsetSlider, Path=Value}"
+                                   ActorYOffset="{Binding ElementName=actorYOffsetSlider, Path=Value}"  />
                     </Image.Effect>
                 </Image>
         </Grid>
@@ -119,15 +120,21 @@
             <StackPanel>
 
             <StackPanel Orientation="Horizontal">
-                <Label>Displacement</Label>
-                <Slider Height="25" HorizontalAlignment="Left" Minimum="-50" Maximum="50" SmallChange="1" LargeChange="1" Value="20" Name="sliderDisplacement" VerticalAlignment="Bottom" Width="289" />
-                <Label Height="28" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="120" Content="{Binding ElementName=sliderDisplacement, Path=Value}" />
+                <Label>ActorScale</Label>
+                <Slider Height="25" HorizontalAlignment="Left" Minimum="0" Maximum="10" SmallChange=".1" LargeChange="1" Value="1" Name="actorScaleSlider" VerticalAlignment="Bottom" Width="289" />
+                <Label Height="28" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="120" Content="{Binding ElementName=actorScaleSlider, Path=Value}" />
             </StackPanel>
 
             <StackPanel Orientation="Horizontal">
-                <Label>Additional Logo Opacity</Label>
-                <Slider Height="25" HorizontalAlignment="Left" Minimum="0" Maximum="1.5" SmallChange="0.05" LargeChange="0.05" Value="0.40" Name="sliderAdditionalOpacity" VerticalAlignment="Bottom" Width="289" />
-                <Label Height="28" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="120" Content="{Binding ElementName=sliderAdditionalOpacity, Path=Value}" />
+                <Label>Actor X Offset</Label>
+                    <Slider Height="25" HorizontalAlignment="Left" Minimum="-5.0" Maximum="5.0" SmallChange="0.05" LargeChange="0.05" Value="0.0" Name="actorXOffsetSlider" VerticalAlignment="Bottom" Width="289" />
+                    <Label Height="28" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="120" Content="{Binding ElementName=actorXOffsetSlider, Path=Value}" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <Label>Actor Y Offset</Label>
+                <Slider Height="25" HorizontalAlignment="Left" Minimum="-5.0" Maximum="5.0" SmallChange="0.05" LargeChange="0.05" Value="0.0" Name="actorYOffsetSlider" VerticalAlignment="Bottom" Width="289" />
+                <Label Height="28" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="120" Content="{Binding ElementName=actorYOffsetSlider, Path=Value}" />
             </StackPanel>
             </StackPanel>
         </Grid>

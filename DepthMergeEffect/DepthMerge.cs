@@ -17,7 +17,6 @@ namespace DepthMergeEffect
         public DepthMerge()
         {
             this.PixelShader = _pixelShader;
-            this.DdxUvDdyUvRegisterIndex = 6;
 
             // Update each DependencyProperty that's registered with a shader register.  This
             // is needed to ensure the shader gets sent the proper default value.
@@ -26,7 +25,9 @@ namespace DepthMergeEffect
             UpdateShaderValue(ActorDepthProperty);
             UpdateShaderValue(MaskedActorProperty);
             UpdateShaderValue(BackgroundDepthProperty);
-            UpdateShaderValue(AdditionalMaskedActorOpacityProperty);
+            UpdateShaderValue(ActorXOffsetProperty);
+            UpdateShaderValue(ActorYOffsetProperty);
+            UpdateShaderValue(ActorScaleProperty);
         }
 
         #endregion
@@ -86,32 +87,44 @@ namespace DepthMergeEffect
 
 
 
-        public double Displacement
+        public double ActorXOffset
         {
-            get { return (double)GetValue(DisplacementProperty); }
-            set { SetValue(DisplacementProperty, value); }
+            get { return (double)GetValue(ActorXOffsetProperty); }
+            set { SetValue(ActorXOffsetProperty, value); }
         }
 
         // Scalar-valued properties turn into shader constants with the register
         // number sent into PixelShaderConstantCallback().
-        public static readonly DependencyProperty DisplacementProperty =
-            DependencyProperty.Register("Displacement", typeof(double), typeof(DepthMerge),
-                    new UIPropertyMetadata(5.0, PixelShaderConstantCallback(0)));
+        public static readonly DependencyProperty ActorXOffsetProperty =
+            DependencyProperty.Register("ActorXOffset", typeof(double), typeof(DepthMerge),
+                    new UIPropertyMetadata(0.0, PixelShaderConstantCallback(1)));
 
 
-
-
-        public double AdditionalMaskedActorOpacity
+        public double ActorYOffset
         {
-            get { return (double)GetValue(AdditionalMaskedActorOpacityProperty); }
-            set { SetValue(AdditionalMaskedActorOpacityProperty, value); }
+            get { return (double)GetValue(ActorYOffsetProperty); }
+            set { SetValue(ActorYOffsetProperty, value); }
         }
 
         // Scalar-valued properties turn into shader constants with the register
         // number sent into PixelShaderConstantCallback().
-        public static readonly DependencyProperty AdditionalMaskedActorOpacityProperty =
-            DependencyProperty.Register("AdditionalMaskedActorOpacity", typeof(double), typeof(DepthMerge),
-                    new UIPropertyMetadata(5.0, PixelShaderConstantCallback(1)));
+        public static readonly DependencyProperty ActorYOffsetProperty =
+            DependencyProperty.Register("ActorYOffset", typeof(double), typeof(DepthMerge),
+                    new UIPropertyMetadata(0.0, PixelShaderConstantCallback(2)));
+
+
+
+        public double ActorScale
+        {
+            get { return (double)GetValue(ActorScaleProperty); }
+            set { SetValue(ActorScaleProperty, value); }
+        }
+
+        // Scalar-valued properties turn into shader constants with the register
+        // number sent into PixelShaderConstantCallback().
+        public static readonly DependencyProperty ActorScaleProperty =
+            DependencyProperty.Register("ActorScale", typeof(double), typeof(DepthMerge),
+                    new UIPropertyMetadata(1.0, PixelShaderConstantCallback(0)));
 
 
         #endregion

@@ -8,9 +8,9 @@
 // Shader constant register mappings (scalars - float, double, Point, Color, Point3D, etc.)
 //-----------------------------------------------------------------------------------------
 
-float  displacement : register(C0);
-float  additionalmaskedActorOpacity : register(C1);
-float4 ddxDdy : register(C6);
+float  ActorScale : register(C0);
+float  ActorXOffset : register(C1);
+float  ActorYOffset : register(C2);
 
 //--------------------------------------------------------------------------------------
 // Sampler Inputs (Brushes)
@@ -30,13 +30,23 @@ float4 main(float2 uv : TEXCOORD) : COLOR
 {
    // Pull the sample from the maskedActor.
    float4 backgroundSample = tex2D(backgroundSampler, uv);
-   float4 maskedActorSample = tex2D(maskedActorSampler, uv);
-   float4 maskedActorDepthSample = tex2D(maskedActorDepthSampler, uv);
    float4 backgroundDepthSample = tex2D(backgroundDepthSampler, uv);
+
+
+   float2 actorUV = uv;
+   actorUV.x += ActorXOffset;
+   actorUV.y += ActorYOffset;
+   actorUV = actorUV * (1.0f / ActorScale);
+   float4 maskedActorSample = tex2D(maskedActorSampler, actorUV);
+   float4 maskedActorDepthSample = tex2D(maskedActorDepthSampler, actorUV);
    
    float actorAlpha = maskedActorSample.a;
    if (maskedActorSample.a != 0.0f && maskedActorDepthSample.r > backgroundDepthSample.r)
   	  actorAlpha = 0.0f;
+
+   if (actorUV.x < 0.0f || actorUV.y > 1.0f || actorUV.y < 0.0f || actorUV.y > 1.0f)
+	  actorAlpha = 0.0f;
+
    float bgAlpha = 1.0f - actorAlpha;
    float3 finalColor = backgroundSample.rgb*bgAlpha + maskedActorSample.rgb*actorAlpha; 
    return float4(finalColor.r, finalColor.g, finalColor.b, 1.0f);
