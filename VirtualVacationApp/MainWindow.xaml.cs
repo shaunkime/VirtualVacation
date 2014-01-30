@@ -51,6 +51,9 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
         private BackgroundRemovedColorStream backgroundRemovedColorStream;
 
         private ColorTransfer.Point3D[] DecorrelatedValues;
+        private ColorTransfer.Point3D DecorrelatedMean;
+        private ColorTransfer.Point3D DecorrelatedStdDev;
+
         private byte[] DecorrelatedRGBA;
 
         /// <summary>
@@ -364,8 +367,20 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
                     }
 
                     backgroundRemovedFrame.CopyPixelDataTo(DecorrelatedRGBA);
-                    
 
+                    bool colorCorrectLive = true;
+                    if (VacationImages[VacationIndex].ColorCorrect && colorCorrectLive)
+                    {
+                        //if (DecorrelatedStdDev == null)
+                        {
+                            DecorrelatedStdDev = new ColorTransfer.Point3D();
+                            DecorrelatedMean = new ColorTransfer.Point3D();
+                            ColorTransfer.ComputeDecorrelation(DecorrelatedRGBA, 4, ref DecorrelatedValues, out DecorrelatedMean, out DecorrelatedStdDev);
+                        }
+                        ColorTransfer.TransferColor(DecorrelatedMean, DecorrelatedStdDev, VacationImages[VacationIndex].Mean, VacationImages[VacationIndex].StdDev, ref DecorrelatedRGBA, 4,
+                            ref DecorrelatedValues);
+                    }
+                    
                     // Write the pixel data into our bitmap
                     this.maskedColorBitmap.WritePixels(
                         new Int32Rect(0, 0, this.maskedColorBitmap.PixelWidth, this.maskedColorBitmap.PixelHeight),
@@ -527,23 +542,22 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
             int colorHeight = (int)this.Backdrop.Height;
 
 
-            ColorTransfer.Point3D mean = new ColorTransfer.Point3D();
-            ColorTransfer.Point3D stdDev = new ColorTransfer.Point3D();
-            ColorTransfer.ComputeDecorrelation(DecorrelatedRGBA, 4, ref DecorrelatedValues, out mean, out stdDev);
-            if (VacationImages[VacationIndex].Mean != null)
+            if (VacationImages[VacationIndex].Mean != null && VacationImages[VacationIndex].ColorCorrect == true)
             {
+                ColorTransfer.Point3D mean = new ColorTransfer.Point3D();
+                ColorTransfer.Point3D stdDev = new ColorTransfer.Point3D();
+                ColorTransfer.ComputeDecorrelation(DecorrelatedRGBA, 4, ref DecorrelatedValues, out mean, out stdDev);
                 ColorTransfer.TransferColor(mean, stdDev, VacationImages[VacationIndex].Mean, VacationImages[VacationIndex].StdDev, ref DecorrelatedRGBA, 4,
                     ref DecorrelatedValues);
+
+                // Write the pixel data into our bitmap
+                this.maskedColorBitmap.WritePixels(
+                    new Int32Rect(0, 0, this.maskedColorBitmap.PixelWidth, this.maskedColorBitmap.PixelHeight),
+                    DecorrelatedRGBA, //backgroundRemovedFrame.GetRawPixelData(),
+                    this.maskedColorBitmap.PixelWidth * sizeof(int),
+                    0);
             }
-
-
-            // Write the pixel data into our bitmap
-            this.maskedColorBitmap.WritePixels(
-                new Int32Rect(0, 0, this.maskedColorBitmap.PixelWidth, this.maskedColorBitmap.PixelHeight),
-                DecorrelatedRGBA, //backgroundRemovedFrame.GetRawPixelData(),
-                this.maskedColorBitmap.PixelWidth * sizeof(int),
-                0);
-
+            
             // create a render target that we'll render our controls to
             var renderBitmap = new RenderTargetBitmap(colorWidth, colorHeight, 96.0, 96.0, PixelFormats.Pbgra32);
 

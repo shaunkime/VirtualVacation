@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:k="clr-namespace:Microsoft.Kinect.Toolkit;assembly=Microsoft.Kinect.Toolkit"
         xmlns:dme="clr-namespace:DepthMergeEffect;assembly=DepthMergeEffect"
-        Title="Virtual Vacation" Height="735" Width="770" Closing="WindowClosing" Loaded="Window_Loaded">
+        Title="Virtual Vacation" Height="1000" Width="1920" Closing="WindowClosing" Loaded="Window_Loaded">
 
     <Window.Resources>
         <ImageBrush x:Key="liveDepthMap" >
