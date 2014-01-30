@@ -19,6 +19,7 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
         static float Sqrt3 = 1.73205080757f;
         static float Sqrt6 = 2.44948974278f;
         static float Sqrt2 = 1.41421356237f;
+        static float OneOver255 = 1.0f / 255.0f;
 
         public static void TransferColor(Point3D oldMean, Point3D oldStdDev, Point3D newMean, Point3D newStdDev, ref byte[] pixels, int bpp, ref Point3D[] decorrelatedValues)
         {
@@ -31,9 +32,9 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
             Point3D lms = new Point3D();
             for (int i = 0; i < pixels.Length; )
             {
-                byte r = pixels[i + 0];
+                byte b = pixels[i + 0];
                 byte g = pixels[i + 1];
-                byte b = pixels[i + 2];
+                byte r = pixels[i + 2];
                 byte a = pixels[i + 3];
 
                 if (a == 0)
@@ -43,7 +44,9 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
                     continue;
                 }
 
-                decorrelatedValue = decorrelatedValues[index];
+                decorrelatedValue.l = decorrelatedValues[index].l;
+                decorrelatedValue.m = decorrelatedValues[index].m;
+                decorrelatedValue.s = decorrelatedValues[index].s;
                 decorrelatedValue.l -= oldMean.l;
                 decorrelatedValue.m -= oldMean.m;
                 decorrelatedValue.s -= oldMean.s;
@@ -55,7 +58,7 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
                 decorrelatedValue.s += newMean.s;
 
                 DecorrellatedToLMS(decorrelatedValue.l, decorrelatedValue.m, decorrelatedValue.s, ref lms);
-                LMSToRGB(ref lms, out pixels[i + 0], out pixels[i + 1], out pixels[i + 2]);
+                LMSToRGB(ref lms, out pixels[i + 2], out pixels[i + 1], out pixels[i + 0]);
 
                 i += bpp;
                 index++;
@@ -77,7 +80,6 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
 
             float l, alpha, beta;
 
-            const float norm = 1.0f / 255.0f;
             float weightSum = 0.0f;
 
             int numDecorrelatedPixels = pixels.Length / bpp;
@@ -87,21 +89,24 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
             float weight = 0.0f;
             for (int i = 0; i < pixels.Length; )
             {
-                byte r = pixels[i + 0];
+                byte b = pixels[i + 0];
                 byte g = pixels[i + 1];
-                byte b = pixels[i + 2];
+                byte r = pixels[i + 2];
                 byte a = pixels[i + 3];
 
                 if (a == 0)
                 {
                     i+=bpp;
+                    decorrelatedPixels[index].l = 0.0f;
+                    decorrelatedPixels[index].m = 0.0f;
+                    decorrelatedPixels[index].s = 0.0f;
                     index++;
                     continue;
                 }
 
-                RGBtoLMS(pixels[i + 0], pixels[i + 1], pixels[i + 2], ref decorrelatedPixels[index]);
+                RGBtoLMS(r, g, b,  ref decorrelatedPixels[index]);
                 LMSToDecorrellated(ref decorrelatedPixels[index], out l, out alpha, out beta);
-                weight = norm * a;
+                weight = OneOver255*(float)a;
 
                 mean.l += l * weight;
                 mean.m += alpha * weight;
@@ -123,9 +128,9 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
             index = 0;
             for (int i = 0; i < pixels.Length; )
             {
-                byte r = pixels[i + 0];
+                byte b = pixels[i + 0];
                 byte g = pixels[i + 1];
-                byte b = pixels[i + 2];
+                byte r = pixels[i + 2];
                 byte a = pixels[i + 3];
 
                 if (a == 0)
@@ -139,7 +144,7 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
                 alpha = decorrelatedPixels[index].m;
                 beta = decorrelatedPixels[index].s;
 
-                weight = norm * a;
+                weight = OneOver255 * (float)a;
 
                 l -= mean.l;
                 alpha -= mean.m;
@@ -168,9 +173,12 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
 
         static void RGBtoLMS(byte r, byte g, byte b, ref Point3D lms)
         {
-            lms.l = (float)Math.Log10((double)Math.Max(0.1f, 0.3811f * r + 0.5783f * g + 0.0402f * b));
-            lms.m = (float)Math.Log10((double)Math.Max(0.1f, 0.1967f * r + 0.7244f * g + 0.0782f * b));
-            lms.s = (float)Math.Log10((double)Math.Max(0.1f, 0.0241f * r + 0.1288f * g + 0.8444f * b));
+            float rf = (float)r * OneOver255;
+            float gf = (float)g * OneOver255;
+            float bf = (float)b * OneOver255;
+            lms.l = (float)Math.Log10((double)/*Math.Max(0.1f,*/(0.3811f * rf + 0.5783f * gf + 0.0402f * bf));
+            lms.m = (float)Math.Log10((double)/*Math.Max(0.1f,*/(0.1967f * rf + 0.7244f * gf + 0.0782f * bf));
+            lms.s = (float)Math.Log10((double)/*Math.Max(0.1f,*/(0.0241f * rf + 0.1288f * gf + 0.8444f * bf));
         }
 
         static void LMSToDecorrellated(ref Point3D lms, out float l, out float alpha, out float beta)
@@ -182,9 +190,9 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
 
         static void DecorrellatedToLMS(float l, float alpha, float beta, ref Point3D lms)
         {
-            float l2 = l / Sqrt3;
-            float alpha2 = alpha / Sqrt6;
-            float beta2 = beta / Sqrt2;
+            float l2 = l * (Sqrt3/3.0f);
+            float alpha2 = alpha * (Sqrt6/6.0f);
+            float beta2 = beta * (Sqrt2/2.0f);
 
             lms.l = l2 + alpha2 + beta2;
             lms.m = l2 + alpha2 - beta2;
@@ -202,9 +210,9 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
             float m2 = (float)Math.Pow(10.0f, lms.m);
             float s2 = (float)Math.Pow(10.0f, lms.s);
 
-            r = (byte)Clamp(4.4679f * l2 - 3.5873f * m2 + 0.1193f * s2, 0.0f, 255.0f);
-            g = (byte)Clamp(-1.2186f * l2 + 2.3809f * m2 -0.1624f * s2, 0.0f, 255.0f);
-            b = (byte)Clamp(0.0497f * l2 - 0.2439f * m2 + 1.2045f * s2, 0.0f, 255.0f);
+            r = (byte)Clamp(255.0f*(4.46790f * l2 - 3.5873f * m2 + 0.1193f * s2), 0.0f, 255.0f);
+            g = (byte)Clamp(255.0f*(-1.2186f * l2 + 2.3809f * m2 - 0.1624f * s2), 0.0f, 255.0f);
+            b = (byte)Clamp(255.0f*(0.04970f * l2 - 0.2439f * m2 + 1.2045f * s2), 0.0f, 255.0f);
         }
     }
 }

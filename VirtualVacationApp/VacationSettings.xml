@@ -5,16 +5,6 @@
   <ShowTutorial>true</ShowTutorial>
   <Stages>  
     <VirtualVacationSettingsBackgroundNode>
-      <BackgroundImage>VirtualVacation/ManOnMoonBackground.png</BackgroundImage>
-      <DepthImage>VirtualVacation/ManOnMoonDepth.png</DepthImage> 
-      <ColorCorrect>false</ColorCorrect>
-      <TargetDepthFloorPixel>
-        <x>642</x>
-        <y>533</y>
-      </TargetDepthFloorPixel>
-      <UserHeightAtTargetDepth>400</UserHeightAtTargetDepth>
-    </VirtualVacationSettingsBackgroundNode>
-    <VirtualVacationSettingsBackgroundNode>
       <BackgroundImage>VirtualVacation/Ocean.jpg</BackgroundImage>
       <DepthImage>VirtualVacation/OceanDepth.png</DepthImage> 
       <ColorCorrect>true</ColorCorrect>
@@ -23,6 +13,16 @@
         <y>667</y>
       </TargetDepthFloorPixel>
       <UserHeightAtTargetDepth>500</UserHeightAtTargetDepth>
+    </VirtualVacationSettingsBackgroundNode>
+    <VirtualVacationSettingsBackgroundNode>
+      <BackgroundImage>VirtualVacation/ManOnMoonBackground.png</BackgroundImage>
+      <DepthImage>VirtualVacation/ManOnMoonDepth.png</DepthImage> 
+      <ColorCorrect>false</ColorCorrect>
+      <TargetDepthFloorPixel>
+        <x>642</x>
+        <y>533</y>
+      </TargetDepthFloorPixel>
+      <UserHeightAtTargetDepth>400</UserHeightAtTargetDepth>
     </VirtualVacationSettingsBackgroundNode>
     <VirtualVacationSettingsBackgroundNode>
       <BackgroundImage>VirtualVacation/PierBandW.jpg</BackgroundImage>
