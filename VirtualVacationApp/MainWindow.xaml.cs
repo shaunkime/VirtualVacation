@@ -50,6 +50,8 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
         /// </summary>
         private BackgroundRemovedColorStream backgroundRemovedColorStream;
 
+        private ColorTransfer.Point3D[] DecorrelatedValues;
+        private byte[] DecorrelatedRGBA;
 
         /// <summary>
         /// Bitmap that will hold color information
@@ -350,15 +352,24 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
                         || this.maskedColorBitmap.PixelHeight != backgroundRemovedFrame.Height)
                     {
                         this.maskedColorBitmap = new WriteableBitmap(backgroundRemovedFrame.Width, backgroundRemovedFrame.Height, 96.0, 96.0, PixelFormats.Bgra32, null);
+                        int numPoints = backgroundRemovedFrame.Width*backgroundRemovedFrame.Height;
+                        DecorrelatedValues = new ColorTransfer.Point3D[numPoints];
+                        for (int i = 0; i < numPoints; i++)
+                            DecorrelatedValues[i] = new ColorTransfer.Point3D();
+
+                        DecorrelatedRGBA = new byte[numPoints * 4];
 
                         ImageBrush liveColorMap = (ImageBrush)this.Resources["liveColorMap"];
                         liveColorMap.ImageSource = maskedColorBitmap;
                     }
 
+                    backgroundRemovedFrame.CopyPixelDataTo(DecorrelatedRGBA);
+                    
+
                     // Write the pixel data into our bitmap
                     this.maskedColorBitmap.WritePixels(
                         new Int32Rect(0, 0, this.maskedColorBitmap.PixelWidth, this.maskedColorBitmap.PixelHeight),
-                        backgroundRemovedFrame.GetRawPixelData(),
+                        DecorrelatedRGBA, //backgroundRemovedFrame.GetRawPixelData(),
                         this.maskedColorBitmap.PixelWidth * sizeof(int),
                         0);
                 }
@@ -514,6 +525,24 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
 
             int colorWidth = (int)this.Backdrop.Width;
             int colorHeight = (int)this.Backdrop.Height;
+
+
+            ColorTransfer.Point3D mean = new ColorTransfer.Point3D();
+            ColorTransfer.Point3D stdDev = new ColorTransfer.Point3D();
+            ColorTransfer.ComputeDecorrelation(DecorrelatedRGBA, 4, ref DecorrelatedValues, out mean, out stdDev);
+            if (VacationImages[VacationIndex].Mean != null)
+            {
+                ColorTransfer.TransferColor(mean, stdDev, VacationImages[VacationIndex].Mean, VacationImages[VacationIndex].StdDev, ref DecorrelatedRGBA, 4,
+                    ref DecorrelatedValues);
+            }
+
+
+            // Write the pixel data into our bitmap
+            this.maskedColorBitmap.WritePixels(
+                new Int32Rect(0, 0, this.maskedColorBitmap.PixelWidth, this.maskedColorBitmap.PixelHeight),
+                DecorrelatedRGBA, //backgroundRemovedFrame.GetRawPixelData(),
+                this.maskedColorBitmap.PixelWidth * sizeof(int),
+                0);
 
             // create a render target that we'll render our controls to
             var renderBitmap = new RenderTargetBitmap(colorWidth, colorHeight, 96.0, 96.0, PixelFormats.Pbgra32);

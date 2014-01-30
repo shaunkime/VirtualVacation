@@ -20,7 +20,7 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
         static float Sqrt6 = 2.44948974278f;
         static float Sqrt2 = 1.41421356237f;
 
-        public static void TransferColor(Point3D oldMean, Point3D oldStdDev, Point3D newMean, Point3D newStdDev, byte[] pixels, int bpp, ref Point3D[] decorrelatedValues)
+        public static void TransferColor(Point3D oldMean, Point3D oldStdDev, Point3D newMean, Point3D newStdDev, ref byte[] pixels, int bpp, ref Point3D[] decorrelatedValues)
         {
             float lScale = newStdDev.l / oldStdDev.l;
             float alphaScale = newStdDev.m / oldStdDev.m;
@@ -37,7 +37,11 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
                 byte a = pixels[i + 3];
 
                 if (a == 0)
+                {
+                    i += bpp;
+                    index++;
                     continue;
+                }
 
                 decorrelatedValue = decorrelatedValues[index];
                 decorrelatedValue.l -= oldMean.l;
@@ -89,7 +93,11 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
                 byte a = pixels[i + 3];
 
                 if (a == 0)
+                {
+                    i+=bpp;
+                    index++;
                     continue;
+                }
 
                 RGBtoLMS(pixels[i + 0], pixels[i + 1], pixels[i + 2], ref decorrelatedPixels[index]);
                 LMSToDecorrellated(ref decorrelatedPixels[index], out l, out alpha, out beta);
@@ -121,7 +129,11 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
                 byte a = pixels[i + 3];
 
                 if (a == 0)
+                {
+                    i += bpp;
+                    index++;
                     continue;
+                }
 
                 l = decorrelatedPixels[index].l;
                 alpha = decorrelatedPixels[index].m;
