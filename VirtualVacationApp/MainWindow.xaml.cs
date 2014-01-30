@@ -89,6 +89,10 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
             public int TargetDepthFloorPixelX;
             public int TargetDepthFloorPixelY;
             public int UserHeightAtTargetDepth;
+
+            public ColorTransfer.Point3D StdDev;
+            public ColorTransfer.Point3D Mean;
+            public ColorTransfer.Point3D[] DecorrelatedValues;
         }
 
         List<VacationImage> VacationImages = new List<VacationImage>();
@@ -576,11 +580,13 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
             }
         }
 
-        private bool SetBackgroundImage(string filename)
+        private bool SetBackground(int index)
         {
+            VacationIndex = index;
+
             BitmapImage src = new BitmapImage();
             src.BeginInit();
-            src.UriSource = new Uri(filename, UriKind.Relative);
+            src.UriSource = new Uri(VacationImages[VacationIndex].BackgroundFilename, UriKind.Relative);
             src.CacheOption = BitmapCacheOption.OnLoad;
             src.EndInit();
             Backdrop.Source = src;
@@ -589,8 +595,28 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
             Backdrop.MinWidth = src.Width;
             Backdrop.MinHeight = src.Height;
             Backdrop.InvalidateMeasure();
+
+            if (VacationImages[VacationIndex].DecorrelatedValues == null)
+            {
+                int numPoints = src.PixelHeight * src.PixelWidth;
+                int stride = src.PixelWidth * 4;
+                int size = src.PixelHeight * stride;
+                byte[] pixels = new byte[size];
+                src.CopyPixels(pixels, stride, 0);
+
+                VacationImage image = VacationImages[VacationIndex];
+                image.DecorrelatedValues = new ColorTransfer.Point3D[numPoints];
+                for (int i = 0; i < numPoints; i++)
+                    image.DecorrelatedValues[i] = new ColorTransfer.Point3D();
+                ColorTransfer.ComputeDecorrelation(pixels, 4, ref image.DecorrelatedValues, out image.Mean, out image.StdDev);
+
+                VacationImages[VacationIndex] = image;
+            }
+
+            SetBackgroundDepthImage(VacationImages[VacationIndex].DepthMaskFilename);
             return true;
         }
+
 
         private bool SetBackgroundDepthImage(string filename)
         {
@@ -613,23 +639,20 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
                 if (VacationIndex < 0)
                     VacationIndex = VacationImages.Count - 1;
 
-                SetBackgroundImage(VacationImages[VacationIndex].BackgroundFilename);
-                SetBackgroundDepthImage(VacationImages[VacationIndex].DepthMaskFilename);
+                SetBackground(VacationIndex);
             }
             else if (e.Key == Key.Right)
             {
                 ++VacationIndex;
                 if (VacationIndex >= VacationImages.Count)
                     VacationIndex = 0;
-                SetBackgroundImage(VacationImages[VacationIndex].BackgroundFilename);
-                SetBackgroundDepthImage(VacationImages[VacationIndex].DepthMaskFilename);
+                SetBackground(VacationIndex);
             }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            SetBackgroundImage(VacationImages[0].BackgroundFilename);
-            SetBackgroundDepthImage(VacationImages[0].DepthMaskFilename);
+            SetBackground(0);
             ImageBrush liveDepthMap = (ImageBrush)this.Resources["liveDepthMap"];
             liveDepthMap.ImageSource = depthColorBitmap;
 
