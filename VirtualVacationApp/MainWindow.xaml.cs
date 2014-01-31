@@ -17,6 +17,7 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
     using Microsoft.Kinect;
     using Microsoft.Kinect.Toolkit;
     using Microsoft.Kinect.Toolkit.BackgroundRemoval;
+    using Microsoft.Speech.Recognition;
     using System.Xml;
     using System.Text;
 
@@ -44,6 +45,8 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
         /// Active Kinect sensor
         /// </summary>
         private KinectSensorChooser sensorChooser;
+
+        private SpeechRecognitionEngine recognizer;
 
         /// <summary>
         /// Our core library which does background 
@@ -157,7 +160,7 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
                     {
                         vacationImage.ColorCorrect = reader.ReadElementContentAsBoolean();
                     }
-                    
+
                     if (reader.ReadToFollowing("TargetDepthFloorPixel"))
                     {
                         if (reader.ReadToFollowing("x"))
@@ -310,7 +313,7 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
                             this.depthColorPixels,
                             this.depthColorBitmap.PixelWidth * sizeof(int),
                             0);
-                        
+
                     }
                 }
 
@@ -351,11 +354,11 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
             {
                 if (backgroundRemovedFrame != null)
                 {
-                    if (null == this.maskedColorBitmap || this.maskedColorBitmap.PixelWidth != backgroundRemovedFrame.Width 
+                    if (null == this.maskedColorBitmap || this.maskedColorBitmap.PixelWidth != backgroundRemovedFrame.Width
                         || this.maskedColorBitmap.PixelHeight != backgroundRemovedFrame.Height)
                     {
                         this.maskedColorBitmap = new WriteableBitmap(backgroundRemovedFrame.Width, backgroundRemovedFrame.Height, 96.0, 96.0, PixelFormats.Bgra32, null);
-                        int numPoints = backgroundRemovedFrame.Width*backgroundRemovedFrame.Height;
+                        int numPoints = backgroundRemovedFrame.Width * backgroundRemovedFrame.Height;
                         DecorrelatedValues = new ColorTransfer.Point3D[numPoints];
                         for (int i = 0; i < numPoints; i++)
                             DecorrelatedValues[i] = new ColorTransfer.Point3D();
@@ -380,7 +383,7 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
                         ColorTransfer.TransferColor(DecorrelatedMean, DecorrelatedStdDev, VacationImages[VacationIndex].Mean, VacationImages[VacationIndex].StdDev, ref DecorrelatedRGBA, 4,
                             ref DecorrelatedValues);
                     }
-                    
+
                     // Write the pixel data into our bitmap
                     this.maskedColorBitmap.WritePixels(
                         new Int32Rect(0, 0, this.maskedColorBitmap.PixelWidth, this.maskedColorBitmap.PixelHeight),
@@ -532,6 +535,11 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
         /// <param name="e">event arguments</param>
         private void ButtonScreenshotClick(object sender, RoutedEventArgs e)
         {
+            TakeScreenShot();
+        }
+
+        private void TakeScreenShot()
+        {
             if (null == this.sensorChooser || null == this.sensorChooser.Kinect)
             {
                 this.statusBarText.Text = Properties.Resources.ConnectDeviceFirst;
@@ -557,7 +565,7 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
                     this.maskedColorBitmap.PixelWidth * sizeof(int),
                     0);
             }
-            
+
             // create a render target that we'll render our controls to
             var renderBitmap = new RenderTargetBitmap(colorWidth, colorHeight, 96.0, 96.0, PixelFormats.Pbgra32);
 
@@ -570,7 +578,7 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
             }
 
             renderBitmap.Render(dv);
-    
+
             // create a png bitmap encoder which knows how to save a .png file
             BitmapEncoder encoder = new PngBitmapEncoder();
 
@@ -598,7 +606,7 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
                 this.statusBarText.Text = string.Format(CultureInfo.InvariantCulture, Properties.Resources.ScreenshotWriteFailed, path);
             }
         }
-        
+
         /// <summary>
         /// Handles the checking or unchecking of the near mode combo box
         /// </summary>
@@ -674,22 +682,33 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
             return true;
         }
 
+
+        private void PreviousImage()
+        {
+            --VacationIndex;
+            if (VacationIndex < 0)
+                VacationIndex = VacationImages.Count - 1;
+
+            SetBackground(VacationIndex);
+        }
+
+        private void NextImage()
+        {
+            ++VacationIndex;
+            if (VacationIndex >= VacationImages.Count)
+                VacationIndex = 0;
+            SetBackground(VacationIndex);
+        }
+
         private void OnKeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Left)
             {
-                --VacationIndex;
-                if (VacationIndex < 0)
-                    VacationIndex = VacationImages.Count - 1;
-
-                SetBackground(VacationIndex);
+                PreviousImage();
             }
             else if (e.Key == Key.Right)
             {
-                ++VacationIndex;
-                if (VacationIndex >= VacationImages.Count)
-                    VacationIndex = 0;
-                SetBackground(VacationIndex);
+                NextImage();
             }
         }
 
@@ -700,6 +719,41 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
             liveDepthMap.ImageSource = depthColorBitmap;
 
             this.KeyUp += new KeyEventHandler(OnKeyUp);
+
+            // Create a SpeechRecognitionEngine object for the default recognizer in the en-US locale.
+            recognizer = new SpeechRecognitionEngine(new System.Globalization.CultureInfo("en-US"));
+            // Create a grammar for finding services in different cities.
+            Choices services = new Choices(new string[] { "next", "previous", "click" });
+
+            GrammarBuilder findServices = new GrammarBuilder();
+            findServices.Append(services);
+
+            // Create a Grammar object from the GrammarBuilder and load it to the recognizer.
+            Grammar servicesGrammar = new Grammar(findServices);
+            recognizer.LoadGrammarAsync(servicesGrammar);
+
+            // Add a handler for the speech recognized event.
+            recognizer.SpeechRecognized +=
+              new EventHandler<SpeechRecognizedEventArgs>(recognizer_SpeechRecognized);
+
+            // Configure the input to the speech recognizer.
+            recognizer.SetInputToDefaultAudioDevice();
+
+            // Start asynchronous, continuous speech recognition.
+            recognizer.RecognizeAsync(RecognizeMode.Multiple);
+        }
+
+        // Handle the SpeechRecognized event.
+        void recognizer_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
+        {
+            Console.WriteLine("Recognized text: " + e.Result.Text + " Confidence: " + e.Result.Confidence);
+
+            if (e.Result.Text == "next" && e.Result.Confidence >= 0.7f)
+                NextImage();
+            else if (e.Result.Text == "previous" && e.Result.Confidence >= 0.7f)
+                PreviousImage();
+            else if (e.Result.Text == "click" && e.Result.Confidence >= 0.7f)
+                TakeScreenShot();
         }
     }
 }
