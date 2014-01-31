@@ -108,6 +108,9 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
         /// </summary>
         public MainWindow()
         {
+
+            //ColorTransfer.UnitTest();
+
             this.InitializeComponent();
 
             // initialize the sensor chooser and UI
@@ -154,12 +157,7 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
                     {
                         vacationImage.ColorCorrect = reader.ReadElementContentAsBoolean();
                     }
-
-                    if (reader.ReadToFollowing("UserHeightAtTargetDepth"))
-                    {
-                        vacationImage.UserHeightAtTargetDepth = reader.ReadElementContentAsInt();
-                    }
-
+                    
                     if (reader.ReadToFollowing("TargetDepthFloorPixel"))
                     {
                         if (reader.ReadToFollowing("x"))
@@ -172,8 +170,10 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
                         }
                     }
 
-
-
+                    if (reader.ReadToFollowing("UserHeightAtTargetDepth"))
+                    {
+                        vacationImage.UserHeightAtTargetDepth = reader.ReadElementContentAsInt();
+                    }
                     VacationImages.Add(vacationImage);
                 }
             }
@@ -674,7 +674,7 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
             return true;
         }
 
-        private void OnKeyDown(object sender, KeyEventArgs e)
+        private void OnKeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Left)
             {
@@ -699,9 +699,7 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
             ImageBrush liveDepthMap = (ImageBrush)this.Resources["liveDepthMap"];
             liveDepthMap.ImageSource = depthColorBitmap;
 
-
-
-            this.KeyDown += new KeyEventHandler(OnKeyDown);
+            this.KeyUp += new KeyEventHandler(OnKeyUp);
         }
     }
 }
