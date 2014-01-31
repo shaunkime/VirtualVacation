@@ -21,11 +21,85 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
         static float Sqrt2 = 1.41421356237f;
         static float OneOver255 = 1.0f / 255.0f;
 
+        public static void UnitTest()
+        {
+            byte[] testPixels = new byte[6 * 4];
+            testPixels[0] = 255;
+            testPixels[1] = 255;
+            testPixels[2] = 255;
+            testPixels[3] = 255;
+
+            testPixels[4] = 255;
+            testPixels[5] = 0;
+            testPixels[6] = 0;
+            testPixels[7] = 255;
+
+            testPixels[8] = 0;
+            testPixels[9] = 255;
+            testPixels[10] = 0;
+            testPixels[11] = 255;
+
+            testPixels[12] = 0;
+            testPixels[13] = 0;
+            testPixels[14] = 255;
+            testPixels[15] = 255;
+
+            testPixels[16] = 0;
+            testPixels[17] = 0;
+            testPixels[18] = 255;
+            testPixels[19] = 255;
+
+            testPixels[20] = 0;
+            testPixels[21] = 0;
+            testPixels[22] = 0;
+            testPixels[23] = 255;
+
+            for (int i = 0; i < testPixels.Length; )
+            {
+                byte r, g, b, r2,g2,b2;
+                float l, alpha, beta;
+                Point3D lms = new Point3D();
+                Point3D lms2 = new Point3D();
+                RGBtoLMS(testPixels[i + 2], testPixels[i + 1], testPixels[i], ref lms);
+                LMSToDecorrellated(ref lms, out l, out alpha, out beta);
+                DecorrellatedToLMS(l, alpha, beta, ref lms2);
+                LMSToRGB(ref lms, out r, out g, out b);
+                LMSToRGB(ref lms2, out r2, out g2, out b2);
+
+                if (!(r == testPixels[i + 2] && g == testPixels[i + 1] && b == testPixels[i]))
+                    System.Diagnostics.Debug.WriteLine("Failed RGBtoLMStoRGB" + i);
+                if (!(r2 == testPixels[i + 2] && g2 == testPixels[i + 1] && b2 == testPixels[i]))
+                    System.Diagnostics.Debug.WriteLine("Failed RGBtoLMStoDecorrToLMStoRGB" + i);
+
+                float distanceLMS = Math.Abs(lms.l - lms2.l) + Math.Abs(lms.m - lms2.m) + Math.Abs(lms.s - lms2.s);
+                if (!(distanceLMS < 0.001f))
+                    System.Diagnostics.Debug.WriteLine("Failed LMStoDecorrToLMS" + i);
+                i += 4;
+            }
+
+            byte[] copyPixels = new byte[testPixels.Length];
+            Array.Copy(testPixels, copyPixels, testPixels.Length);
+
+            Point3D[] decorrellatedPixels = new Point3D[testPixels.Length / 4];
+            for (int i = 0; i < decorrellatedPixels.Length; i++)
+                decorrellatedPixels[i] = new Point3D();
+            Point3D mean;
+            Point3D stdDev;
+            ComputeDecorrelation(testPixels, 4, ref decorrellatedPixels, out mean, out stdDev);
+            TransferColor(mean, stdDev, mean, stdDev, ref copyPixels, 4, ref decorrellatedPixels);
+
+            for (int i = 0; i < testPixels.Length; i++)
+            {
+                if (!(testPixels[i] == copyPixels[i]))
+                    System.Diagnostics.Debug.WriteLine("Failed array copy " + i);
+            }
+        }
+
         public static void TransferColor(Point3D oldMean, Point3D oldStdDev, Point3D newMean, Point3D newStdDev, ref byte[] pixels, int bpp, ref Point3D[] decorrelatedValues)
         {
             float lScale = newStdDev.l / oldStdDev.l;
             float alphaScale = newStdDev.m / oldStdDev.m;
-            float betaScale = newStdDev.m / oldStdDev.s;
+            float betaScale = newStdDev.s / oldStdDev.s;
 
             int index = 0;
             Point3D decorrelatedValue = new Point3D();
@@ -58,8 +132,11 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
                 decorrelatedValue.s += newMean.s;
 
                 DecorrellatedToLMS(decorrelatedValue.l, decorrelatedValue.m, decorrelatedValue.s, ref lms);
-                LMSToRGB(ref lms, out pixels[i + 2], out pixels[i + 1], out pixels[i + 0]);
+                LMSToRGB(ref lms, out r, out g, out b);
 
+                pixels[i + 2] = r;
+                pixels[i + 1] = g;
+                pixels[i + 0] = b;
                 i += bpp;
                 index++;
             }
@@ -87,6 +164,7 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
             // First, compute the mean
             int index = 0;
             float weight = 0.0f;
+            Point3D tempLMS = new Point3D();
             for (int i = 0; i < pixels.Length; )
             {
                 byte b = pixels[i + 0];
@@ -104,9 +182,12 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
                     continue;
                 }
 
-                RGBtoLMS(r, g, b,  ref decorrelatedPixels[index]);
-                LMSToDecorrellated(ref decorrelatedPixels[index], out l, out alpha, out beta);
-                weight = OneOver255*(float)a;
+                RGBtoLMS(r, g, b, ref tempLMS);
+                LMSToDecorrellated(ref tempLMS, out l, out alpha, out beta);
+                weight = 1.0f;//OneOver255*(float)a;
+                decorrelatedPixels[index].l = l;
+                decorrelatedPixels[index].m = alpha;
+                decorrelatedPixels[index].s = beta;
 
                 mean.l += l * weight;
                 mean.m += alpha * weight;
@@ -128,9 +209,6 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
             index = 0;
             for (int i = 0; i < pixels.Length; )
             {
-                byte b = pixels[i + 0];
-                byte g = pixels[i + 1];
-                byte r = pixels[i + 2];
                 byte a = pixels[i + 3];
 
                 if (a == 0)
@@ -144,7 +222,7 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
                 alpha = decorrelatedPixels[index].m;
                 beta = decorrelatedPixels[index].s;
 
-                weight = OneOver255 * (float)a;
+                weight = 1.0f;//OneOver255 * (float)a;
 
                 l -= mean.l;
                 alpha -= mean.m;
@@ -173,9 +251,10 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
 
         static void RGBtoLMS(byte r, byte g, byte b, ref Point3D lms)
         {
-            float rf = (float)r * OneOver255;
-            float gf = (float)g * OneOver255;
-            float bf = (float)b * OneOver255;
+            float rf = (float)Math.Max(r * OneOver255,0.0000001f);
+            float gf = (float)Math.Max(g * OneOver255,0.0000001f);
+            float bf = (float)Math.Max(b * OneOver255, 0.0000001f);
+
             lms.l = (float)Math.Log10((double)/*Math.Max(0.1f,*/(0.3811f * rf + 0.5783f * gf + 0.0402f * bf));
             lms.m = (float)Math.Log10((double)/*Math.Max(0.1f,*/(0.1967f * rf + 0.7244f * gf + 0.0782f * bf));
             lms.s = (float)Math.Log10((double)/*Math.Max(0.1f,*/(0.0241f * rf + 0.1288f * gf + 0.8444f * bf));
@@ -210,9 +289,9 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
             float m2 = (float)Math.Pow(10.0f, lms.m);
             float s2 = (float)Math.Pow(10.0f, lms.s);
 
-            r = (byte)Clamp(255.0f*(4.46790f * l2 - 3.5873f * m2 + 0.1193f * s2), 0.0f, 255.0f);
-            g = (byte)Clamp(255.0f*(-1.2186f * l2 + 2.3809f * m2 - 0.1624f * s2), 0.0f, 255.0f);
-            b = (byte)Clamp(255.0f*(0.04970f * l2 - 0.2439f * m2 + 1.2045f * s2), 0.0f, 255.0f);
+            r = (byte)Clamp(255.0f * (4.46790f * l2 - 3.5873f * m2 + 0.1193f * s2) + 0.5f, 0.0f, 255.0f);
+            g = (byte)Clamp(255.0f * (-1.2186f * l2 + 2.3809f * m2 - 0.1624f * s2) + 0.5f, 0.0f, 255.0f);
+            b = (byte)Clamp(255.0f * (0.04970f * l2 - 0.2439f * m2 + 1.2045f * s2) + 0.5f, 0.0f, 255.0f);
         }
     }
 }
