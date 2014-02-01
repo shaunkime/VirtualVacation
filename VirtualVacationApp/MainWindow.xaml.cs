@@ -84,6 +84,10 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
         /// </summary>
         private int currentlyTrackedSkeletonId;
 
+        private float currentSkeletonHeight;
+
+        private Tuple<float, float, float, float> lastFloorPlane = new Tuple<float, float, float, float>(0.0f, 0.0f, 0.0f, 0.0f);
+
         /// <summary>
         /// Track whether Dispose has been called
         /// </summary>
@@ -231,6 +235,8 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
             this.sensorChooser = null;
         }
 
+        private bool firstValueFloorPlane = true;
+
         /// <summary>
         /// Event handler for Kinect sensor's DepthFrameReady event
         /// </summary>
@@ -322,6 +328,7 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
                     if (null != colorFrame)
                     {
                         this.backgroundRemovedColorStream.ProcessColor(colorFrame.GetRawPixelData(), colorFrame.Timestamp);
+                        
                     }
                 }
 
@@ -331,6 +338,41 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
                     {
                         skeletonFrame.CopySkeletonDataTo(this.skeletons);
                         this.backgroundRemovedColorStream.ProcessSkeleton(this.skeletons, skeletonFrame.Timestamp);
+
+                        if (firstValueFloorPlane == true && 
+                            skeletonFrame.FloorClipPlane.Item1 != 0.0f &&
+                            skeletonFrame.FloorClipPlane.Item2 != 0.0f && 
+                            skeletonFrame.FloorClipPlane.Item3 != 0.0f && 
+                            skeletonFrame.FloorClipPlane.Item4 != 0.0f)
+                        {
+                            lastFloorPlane = skeletonFrame.FloorClipPlane;
+                            firstValueFloorPlane = false;
+                            ComputeUserUVTranslation();
+                        }
+
+
+                        foreach (Skeleton skel in skeletons)
+                        {
+                            if (skel.TrackingState == SkeletonTrackingState.NotTracked)
+                                continue;
+
+                            SkeletonPoint pt = skel.Joints[JointType.Head].Position;
+                            ColorImagePoint headColorPos = sensorChooser.Kinect.CoordinateMapper.MapSkeletonPointToColorPoint(pt, sensorChooser.Kinect.ColorStream.Format);
+                            DepthImagePoint headDepthPos = sensorChooser.Kinect.CoordinateMapper.MapSkeletonPointToDepthPoint(pt, sensorChooser.Kinect.DepthStream.Format);
+
+                            pt = skel.Joints[JointType.FootLeft].Position;
+                            ColorImagePoint lFootColorPos = sensorChooser.Kinect.CoordinateMapper.MapSkeletonPointToColorPoint(pt, sensorChooser.Kinect.ColorStream.Format);
+
+                            pt = skel.Joints[JointType.FootRight].Position;
+                            ColorImagePoint rFootColorPos = sensorChooser.Kinect.CoordinateMapper.MapSkeletonPointToColorPoint(pt, sensorChooser.Kinect.ColorStream.Format);
+
+                            if (lFootColorPos.Y < -50 || rFootColorPos.Y < -50)
+                                continue;
+
+                            float charHeightColor = Math.Abs((float) headColorPos.Y - 0.5f * (float)(lFootColorPos.Y + rFootColorPos.Y));
+                            //Console.WriteLine("Char height: " + charHeightColor + " Char depth: " + headDepthPos.Depth);
+
+                        }
                     }
                 }
 
@@ -479,7 +521,6 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
                     this.backgroundRemovedColorStream = new BackgroundRemovedColorStream(args.NewSensor);
                     this.backgroundRemovedColorStream.Enable(ColorFormat, DepthFormat);
 
-
                     // Allocate space to put the depth pixels we'll receive
                     depthPixels = new DepthImagePixel[args.NewSensor.DepthStream.FramePixelDataLength];
 
@@ -517,6 +558,7 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
                         args.NewSensor.SkeletonStream.EnableTrackingInNearRange = false;
                     }
 
+                    ComputeUniformScale();
                     this.statusBarText.Text = Properties.Resources.ReadyForScreenshot;
                 }
                 catch (InvalidOperationException)
@@ -631,6 +673,124 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
             }
         }
 
+        float UserCalibrationTargetDepth = 2.5f;
+        float TargetUserHeight = 1.8288f; // 6 feet
+     
+        private float ComputeUniformScale()
+        {
+            if (sensorChooser.Kinect == null)
+                return 1.0f;
+
+            float workingZ = UserCalibrationTargetDepth;
+            SkeletonPoint pt = new SkeletonPoint();
+            pt.X = 0.0f;
+            pt.Y = TargetUserHeight * 0.5f;
+            pt.Z = workingZ;
+            DepthImagePoint headDepthPos = sensorChooser.Kinect.CoordinateMapper.MapSkeletonPointToDepthPoint(pt, sensorChooser.Kinect.DepthStream.Format);
+
+            pt.Y = -TargetUserHeight * 0.5f;
+            DepthImagePoint feetDepthPos = sensorChooser.Kinect.CoordinateMapper.MapSkeletonPointToDepthPoint(pt, sensorChooser.Kinect.DepthStream.Format);
+
+            float screenHeightAtTargetDepth = Math.Abs(headDepthPos.Y - feetDepthPos.Y);
+            Console.WriteLine("screenHeightAtTargetDepthSrc: " + screenHeightAtTargetDepth);
+
+            float percentageOfImageSize = VacationImages[VacationIndex].UserHeightAtTargetDepth /
+                (float)Backdrop.Source.Height;
+            Console.WriteLine("screenHeightAtTargetDepthDest: " + percentageOfImageSize * (float)sensorChooser.Kinect.DepthStream.FrameHeight);
+            float userUniformScale = screenHeightAtTargetDepth / (percentageOfImageSize * (float)sensorChooser.Kinect.DepthStream.FrameHeight);
+            Console.WriteLine("userUniformScale: " + userUniformScale);
+            return userUniformScale;
+         
+        }
+
+        public class Vector2
+        {
+            public Vector2(float X, float Y)
+            {
+                x = X;
+                y = Y;
+            }
+
+            public float x;
+            public float y;
+        };
+
+        public Vector2 ComputeResizedTargetDepthFloorPixel(Vector2 targetDims, Vector2 sourceDims, bool invert)
+        {
+            if (invert)
+            {
+                return new Vector2(( VacationImages[VacationIndex].TargetDepthFloorPixelX / sourceDims.x) * targetDims.x,
+                     ((sourceDims.y - VacationImages[VacationIndex].TargetDepthFloorPixelY) / sourceDims.y) * targetDims.y);
+            }
+            else
+            {
+                return new Vector2((VacationImages[VacationIndex].TargetDepthFloorPixelX / sourceDims.x) * targetDims.x,
+                     ((VacationImages[VacationIndex].TargetDepthFloorPixelY) / sourceDims.y) * targetDims.y);
+            }
+        }
+
+        private SkeletonPoint ClosestPointOnFloorPlane(SkeletonPoint pt)
+        {
+            SkeletonPoint normal = new SkeletonPoint();
+            normal.X = lastFloorPlane.Item1;
+            normal.Y = lastFloorPlane.Item2;
+            normal.Z = lastFloorPlane.Item3;
+            float p = lastFloorPlane.Item4;
+            float distance = pt.X * normal.X + pt.Y * normal.Y + pt.Z * normal.Z + p;
+
+            SkeletonPoint result = new SkeletonPoint();
+            result.X = pt.X - normal.X * distance;
+            result.Y = pt.Y - normal.Y * distance;
+            result.Z = pt.Z - normal.Z * distance;
+
+            return result;
+        }
+
+        private void ComputeUserUVTranslation()
+        {
+            if (sensorChooser.Kinect == null)
+            {
+                return;
+            }
+
+            int depthMapHeight = sensorChooser.Kinect.DepthStream.FrameHeight;
+
+            float workingZ = UserCalibrationTargetDepth;
+            SkeletonPoint pt = new SkeletonPoint();
+            pt.X = 0.0f;
+            pt.Y = TargetUserHeight * 0.5f;
+            pt.Z = workingZ;
+            DepthImagePoint headDepthPos = sensorChooser.Kinect.CoordinateMapper.MapSkeletonPointToDepthPoint(pt, sensorChooser.Kinect.DepthStream.Format);
+            int workingDepth = headDepthPos.Depth;
+
+            Vector2 sourceDims = new Vector2((float)Backdrop.Source.Width,
+                (float)Backdrop.Source.Height);
+            Vector2 targetDims = new Vector2((float)sensorChooser.Kinect.DepthStream.FrameWidth,
+                (float)sensorChooser.Kinect.DepthStream.FrameHeight);
+
+            Vector2 resizedTargetFloorPixel = ComputeResizedTargetDepthFloorPixel(
+                targetDims, sourceDims, false);
+            
+            SkeletonPoint targetUserPos = new SkeletonPoint();
+            targetUserPos.X = 0.0f;
+            targetUserPos.Y = 0.0f;
+            targetUserPos.Z = UserCalibrationTargetDepth;
+
+            SkeletonPoint closestPtTargetUserDepth = ClosestPointOnFloorPlane(targetUserPos);
+            DepthImagePoint screenPtTargetUserDepth = sensorChooser.Kinect.CoordinateMapper.MapSkeletonPointToDepthPoint(closestPtTargetUserDepth, sensorChooser.Kinect.DepthStream.Format);
+            if (screenPtTargetUserDepth.Y > depthMapHeight)
+                screenPtTargetUserDepth.Y = depthMapHeight;
+            Console.WriteLine("screenPtTargetUserDepth: " + screenPtTargetUserDepth.X + ", " + screenPtTargetUserDepth.Y);
+            Console.WriteLine("resizedTargetFloorPixel: " + resizedTargetFloorPixel.y);
+
+            Vector2 userUVTranslate = new Vector2(0.0f,
+                                          -(resizedTargetFloorPixel.y - screenPtTargetUserDepth.Y) / ((float)depthMapHeight));
+            Console.WriteLine("******* userUVTranslate: " + userUVTranslate.y);
+
+            this.actorXOffsetSlider.Value = 0.0f;
+            this.actorYOffsetSlider.Value = userUVTranslate.y;
+        }
+
         private bool SetBackground(int index)
         {
             VacationIndex = index;
@@ -665,6 +825,9 @@ namespace Microsoft.Samples.Kinect.VirtualVacation
             }
 
             SetBackgroundDepthImage(VacationImages[VacationIndex].DepthMaskFilename);
+
+            float userScale = ComputeUniformScale();
+            ComputeUserUVTranslation();
             return true;
         }
 

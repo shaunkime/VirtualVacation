@@ -34,9 +34,11 @@ float4 main(float2 uv : TEXCOORD) : COLOR
 
 
    float2 actorUV = uv;
-   actorUV.x += ActorXOffset;
-   actorUV.y += ActorYOffset;
-   actorUV = actorUV * (1.0f / ActorScale);
+   //actorUV.x += - 0.5f*ActorScale;
+   //actorUV.y += - 0.5f*ActorScale;
+   //actorUV = actorUV * (1.0f / ActorScale);
+   actorUV.x +=  ActorXOffset;
+   actorUV.y +=  ActorYOffset;
    float4 maskedActorSample = tex2D(maskedActorSampler, actorUV);
    float4 maskedActorDepthSample = tex2D(maskedActorDepthSampler, actorUV);
    
