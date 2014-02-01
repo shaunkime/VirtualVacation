@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("redist/x86/kinectbackgroundremoval180_32.dll")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("redist/amd64/kinectbackgroundremoval180_64.dll")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("kinectbackgroundremoval180_32.dll")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("kinectbackgroundremoval180_64.dll")]
 
 
